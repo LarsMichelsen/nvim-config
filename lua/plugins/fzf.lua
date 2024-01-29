@@ -2,14 +2,6 @@
 -- Fuzzy find using fzf (Triggered using CTRL-A)
 --
 
-local function map(mode, lhs, rhs, opts)
-    local options = { noremap = true, silent = true }
-    if opts then
-        options = vim.tbl_extend("force", options, opts)
-    end
-    vim.keymap.set(mode, lhs, rhs, options)
-end
-
 return {
     {
         "ibhagwan/fzf-lua",
@@ -38,14 +30,16 @@ return {
             })
         end,
         init = function()
-            map("n", "<C-t>", "<cmd>lua require('fzf-lua').files()<CR>")
-            map("n", "<C-p>", "<cmd>lua require('fzf-lua').git_files()<CR>")
-            map("n", "<C-l>", "<cmd>lua require('fzf-lua').git_bcommits()<CR>")
-            map("n", "<C-h>", "<cmd>lua require('fzf-lua').oldfiles()<CR>")
-            map("n", "<C-a>", '<cmd>lua require("fzf-lua").live_grep_native()<CR>')
-            --map('n', '<C-s>', ':Ag!<CR>')
-            -- Immediately search for the word under the cursor in a new tab
-            map("n", "<Leader>ag", "<cmd>lua require('fzf-lua').grep_cword()<CR>")
+            local wk = require("which-key")
+            wk.register({
+                ["<C-t>"] = { "<cmd>lua require('fzf-lua').files()<CR>", "Find files" },
+                ["<C-p>"] = { "<cmd>lua require('fzf-lua').git_files()<CR>", "Find git files" },
+                ["<C-l>"] = { "<cmd>lua require('fzf-lua').git_bcommits()<CR>", "Find git commits" },
+                ["<C-b>"] = { "<cmd>lua require('fzf-lua').buffers()<CR>", "Find buffers" },
+                ["<C-h>"] = { "<cmd>lua require('fzf-lua').oldfiles()<CR>", "Find file history" },
+                ["<C-a>"] = { "<cmd>lua require('fzf-lua').live_grep_native()<CR>", "Find in files" },
+                ["<leader>wf"] = { "<cmd>lua require('fzf-lua').grep_cword()<CR>", "Find word under cursor" },
+            })
         end,
     },
 }

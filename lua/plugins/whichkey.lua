@@ -1,4 +1,3 @@
--- TODO Not started to adopt this yet, but it looks like a good idea.
 return {
     "folke/which-key.nvim",
     event = "VeryLazy",

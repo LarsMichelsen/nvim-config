@@ -28,11 +28,12 @@ A lot more is available, but I'd like to highlight some of the most useful ones:
 * Fuzzy file search: `CTRL+a`
 * File history: `CTRL+h`
 * Word under cursor:
+  * Search in project: `,wf`
   * Go to definition: `,d`
-  * List references: `gr`
-  * Open link in browser: `gx`
-  * Show documentation/docstring: `K`
-  * Replace in current file: `CTRL+f`
+  * List references: `,wr`
+  * Replace in current file: `,wr`
+  * Show documentation/docstring: `,wd`
+  * Open link in browser: `,wb`
 * Comment out current line: `gcc`
 * Git
   * Git blame current file: `,gb`

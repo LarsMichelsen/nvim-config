@@ -57,13 +57,12 @@ return {
             -- Key mappings
             -- Based on: https://github.com/neovim/nvim-lspconfig#suggested-configuration
             -- See `:help vim.diagnostic.*` for documentation on any of the below functions
-            local opts = { noremap = true, silent = true }
 
-            vim.keymap.set("n", "<C-k>", vim.diagnostic.goto_prev, opts)
-            vim.keymap.set("n", "<C-j>", vim.diagnostic.goto_next, opts)
-            -- Not using them
-            -- vim.keymap.set('n', '<space>e', vim.diagnostic.open_float, opts)
-            -- vim.keymap.set('n', '<space>q', vim.diagnostic.setloclist, opts)
+            local wk = require("which-key")
+            wk.register({
+                ["<C-k>"] = { vim.diagnostic.goto_prev, "Previous finding" },
+                ["<C-j>"] = { vim.diagnostic.goto_next, "Next finding" },
+            })
 
             -- Use an on_attach function to only setup things after the language server
             -- attaches to the current buffer
@@ -77,37 +76,37 @@ return {
                 vim.api.nvim_buf_set_option(bufnr, "omnifunc", "v:lua.vim.lsp.omnifunc")
 
                 -- Mappings.
-                -- See `:help vim.lsp.*` for documentation on any of the below functions
-                local bufopts = { noremap = true, silent = true, buffer = bufnr }
-                -- Not used / supported by my lsp so far
-                -- vim.keymap.set('n', 'gD', vim.lsp.buf.declaration, bufopts)
-                -- vim.keymap.set('n', 'gi', vim.lsp.buf.implementation, bufopts)
-                -- vim.keymap.set('n', '<space>D', vim.lsp.buf.type_definition, bufopts)
+                wk.register({
+                    -- Not used / supported by my lsp so far
+                    -- vim.keymap.set('n', 'gD', vim.lsp.buf.declaration, bufopts)
+                    -- vim.keymap.set('n', 'gi', vim.lsp.buf.implementation, bufopts)
+                    -- vim.keymap.set('n', '<space>D', vim.lsp.buf.type_definition, bufopts)
 
-                vim.keymap.set("n", "<leader>d", vim.lsp.buf.definition, bufopts)
-                -- nmap <buffer> gD :tab LspDefinition<cr>
-                -- vim.keymap.set('n', '<leader>d', '<cmd>tab split | lua vim.lsp.buf.definition()<CR>', bufopts)
-                vim.keymap.set("n", "K", vim.lsp.buf.hover, bufopts)
+                    ["<leader>d"] = { vim.lsp.buf.definition, "Go to definition" },
 
-                -- Conflicts with vim.diagnostic.goto_prev (see above)
-                -- vim.keymap.set('n', '<C-k>', vim.lsp.buf.signature_help, bufopts)
+                    -- Conflicts with vim.diagnostic.goto_prev (see above)
+                    -- vim.keymap.set('n', '<C-k>', vim.lsp.buf.signature_help, bufopts)
 
-                -- No idea what to do with them
-                -- vim.keymap.set('n', '<space>wa', vim.lsp.buf.add_workspace_folder, bufopts)
-                -- vim.keymap.set('n', '<space>wr', vim.lsp.buf.remove_workspace_folder, bufopts)
-                -- vim.keymap.set('n', '<space>wl', function()
-                --   print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
-                -- end, bufopts)
+                    -- No idea what to do with them
+                    -- vim.keymap.set('n', '<space>wa', vim.lsp.buf.add_workspace_folder, bufopts)
+                    -- vim.keymap.set('n', '<space>wr', vim.lsp.buf.remove_workspace_folder, bufopts)
+                    -- vim.keymap.set('n', '<space>wl', function()
+                    --   print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
+                    -- end, bufopts)
 
-                vim.keymap.set("n", "<space>rn", vim.lsp.buf.rename, bufopts)
-                -- vim.keymap.set('n', '<space>ca', vim.lsp.buf.code_action, bufopts)
-                vim.keymap.set("n", "<space>ca", function()
-                    vim.lsp.buf.code_action({ apply = true })
-                end, bufopts)
-                vim.keymap.set("n", "gr", vim.lsp.buf.references, bufopts)
+                    -- Using native vim feature
+                    --["<leader>rn"] = { vim.lsp.buf.rename, "Rename" },
+                    -- Current lsp has no support for this
+                    --["<leader>ca"] = {vim.lsp.buf.code_action, "Code action"},
+                    --vim.keymap.set("n", "<space>ca", function()
+                    --    vim.lsp.buf.code_action({ apply = true })
+                    --end, bufopts)
 
-                -- No need to trigger manually - doing format on save (see below)
-                -- vim.keymap.set('n', '<space>f', function() vim.lsp.buf.format { async = true } end, bufopts)
+                    ["<leader>wr"] = { vim.lsp.buf.references, "Find references" },
+
+                    -- No need to trigger manually - doing format on save (see below)
+                    --["<leader>f"] = { vim.lsp.buf.formatting, "Format" },
+                }, { buffer = bufnr })
 
                 -- Run formatting automatically on save
                 local augroup = vim.api.nvim_create_augroup("LspFormatting", { clear = true })
