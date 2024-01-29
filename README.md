@@ -42,8 +42,4 @@ A lot more is available, but I'd like to highlight some of the most useful ones:
 * Toggle dark/light: `F10`
 * Deploy: `F12`
 
-Now that I list them here, I recognize it's actually a wild bag of shortcuts. Should probably be
-cleaned up, but that would require me to unlearn all the old stuff. Uhoh.
-
-Using `which-key` you can also see the available shortcuts. I haven't added descriptions to all
-shortcuts yet, but I'm working on it.
+Using `:WhichKey` you can see the available shortcuts.
