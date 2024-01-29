@@ -103,7 +103,7 @@ return {
                     --    vim.lsp.buf.code_action({ apply = true })
                     --end, bufopts)
 
-                    ["<leader>wr"] = { vim.lsp.buf.references, "Find references" },
+                    ["<leader>wc"] = { vim.lsp.buf.references, "Find references" },
 
                     -- No need to trigger manually - doing format on save (see below)
                     --["<leader>f"] = { vim.lsp.buf.formatting, "Format" },

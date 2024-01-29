@@ -30,7 +30,7 @@ A lot more is available, but I'd like to highlight some of the most useful ones:
 * Word under cursor:
   * Search in project: `,wf`
   * Go to definition: `,d`
-  * List references: `,wr`
+  * List references: `,wc`
   * Replace in current file: `,wr`
   * Show documentation/docstring: `,wd`
   * Open link in browser (or search word): `,wb`
