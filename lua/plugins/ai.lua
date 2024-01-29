@@ -54,9 +54,11 @@ return {
             -- tail -f $HOME/.local/state/nvim/lsp.log | grep -i copilot
             --vim.lsp.set_log_level("DEBUG")
 
+            -- Enable on specific files / folders
+            -- Inspiration taken from here: https://github.com/zbirenbaum/copilot.lua/issues/74
+            -- I am not 100% sure whether this approach is 100% safe because the Lsp is attached
+            -- and detached again short after to my understanding. But it seems to work.
             local augroup = vim.api.nvim_create_augroup("copilot-disable-patterns", { clear = true })
-            -- Enable on specific projects
-            -- https://github.com/zbirenbaum/copilot.lua/issues/74
             vim.api.nvim_create_autocmd("LspAttach", {
                 group = augroup,
                 pattern = "*",
