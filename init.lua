@@ -1,18 +1,3 @@
--- Works for me :-)
---
--- Useful shortcuts
---
--- - Fuzzy file search: CTRL+s (full screen)
--- - File history: CTRL+h
--- - Go to definition: ,d
--- - List references: gr
--- - Open link in browser: gx
--- - Show documentation/docstring: SHIFT+K
--- - Git log of current buffer: CTRL+l
--- - Jump linter findings CTRL+k, CTRL+j
--- - Toggle dark/light: F10
--- - Deploy: F12
-
 -- Bootstrap lazy.nvim
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not vim.loop.fs_stat(lazypath) then

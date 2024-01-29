@@ -31,6 +31,8 @@ map("n", "<C-y>", "3<C-y>")
 -- Center screen after focussing the next search result
 map("n", "n", "nzz")
 
+map("n", "<leader>gb", ":Git blame<CR>")
+
 map("n", "<Down>", "gj")
 map("n", "<Up>", "gk")
 
