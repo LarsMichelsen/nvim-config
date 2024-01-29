@@ -83,6 +83,7 @@ return {
                     -- vim.keymap.set('n', '<space>D', vim.lsp.buf.type_definition, bufopts)
 
                     ["<leader>d"] = { vim.lsp.buf.definition, "Go to definition" },
+                    ["<leader>wd"] = { vim.lsp.buf.hover, "Show documentation" },
 
                     -- Conflicts with vim.diagnostic.goto_prev (see above)
                     -- vim.keymap.set('n', '<C-k>', vim.lsp.buf.signature_help, bufopts)

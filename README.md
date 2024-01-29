@@ -33,7 +33,7 @@ A lot more is available, but I'd like to highlight some of the most useful ones:
   * List references: `,wr`
   * Replace in current file: `,wr`
   * Show documentation/docstring: `,wd`
-  * Open link in browser: `,wb`
+  * Open link in browser (or search word): `,wb`
 * Comment out current line: `gcc`
 * Git
   * Git blame current file: `,gb`
