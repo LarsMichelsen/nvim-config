@@ -10,6 +10,42 @@ return {
         build = ":MasonUpdate",
     },
     {
+        "WhoIsSethDaniel/mason-tool-installer.nvim",
+        config = function()
+            require("mason-tool-installer").setup({
+                ensure_installed = {
+                    -- lua
+                    "stylua", -- formatter
+                    -- shell
+                    "shfmt", -- formatter
+                    "shellcheck", -- linter
+                    -- yaml
+                    "yamllint", -- linter
+                    -- containers
+                    "hadolint", -- linter
+                },
+            })
+
+            vim.api.nvim_create_autocmd("User", {
+                pattern = "MasonToolsStartingInstall",
+                callback = function()
+                    vim.schedule(function()
+                        print("mason-tool-installer is starting")
+                    end)
+                end,
+            })
+
+            vim.api.nvim_create_autocmd("User", {
+                pattern = "MasonToolsUpdateCompleted",
+                callback = function(e)
+                    vim.schedule(function()
+                        print(vim.inspect(e.data)) -- print the table that lists the programs that were installed
+                    end)
+                end,
+            })
+        end,
+    },
+    {
         "williamboman/mason-lspconfig.nvim",
         event = { "BufReadPre", "BufNewFile" },
         dependencies = {
@@ -19,30 +55,23 @@ return {
         opts = function(_, opts)
             opts.ensure_installed = {
                 -- python
-                "python-lsp-server",
-
+                "pylsp",
                 -- lua
-                "lua-language-server", -- lsp
-                "stylua", -- formatter
-
+                "lua_ls",
                 -- shell
-                "bash-language-server", -- lsp
-                "shfmt", -- formatter
-                "shellcheck", -- linter
-
-                -- yaml
-                "yamllint", -- linter
-
+                "bashls",
                 -- containers
-                "hadolint", -- linter
-                "dockerfile-language-server",
-                --"docker-compose-language-service",
+                "dockerls",
+                -- Documents, spell and grammar checking
+                "ltex",
             }
         end,
-        config = function()
+        config = function(_, opts)
             require("mason").setup({
                 PATH = "append",
             })
+
+            require("mason-lspconfig").setup(opts)
 
             -- See also:
             --   https://github.com/python-lsp/python-lsp-server/blob/develop/CONFIGURATION.md
@@ -58,12 +87,6 @@ return {
             -- Based on: https://github.com/neovim/nvim-lspconfig#suggested-configuration
             -- See `:help vim.diagnostic.*` for documentation on any of the below functions
 
-            local wk = require("which-key")
-            wk.register({
-                ["<C-k>"] = { vim.diagnostic.goto_prev, "Previous finding" },
-                ["<C-j>"] = { vim.diagnostic.goto_next, "Next finding" },
-            })
-
             -- Use an on_attach function to only setup things after the language server
             -- attaches to the current buffer
             local on_attach = function(client, bufnr)
@@ -76,7 +99,10 @@ return {
                 vim.api.nvim_buf_set_option(bufnr, "omnifunc", "v:lua.vim.lsp.omnifunc")
 
                 -- Mappings.
-                wk.register({
+                require("which-key").register({
+                    ["<C-k>"] = { vim.diagnostic.goto_prev, "Previous finding" },
+                    ["<C-j>"] = { vim.diagnostic.goto_next, "Next finding" },
+
                     -- Not used / supported by my lsp so far
                     -- vim.keymap.set('n', 'gD', vim.lsp.buf.declaration, bufopts)
                     -- vim.keymap.set('n', 'gi', vim.lsp.buf.implementation, bufopts)
@@ -84,6 +110,7 @@ return {
 
                     ["<leader>d"] = { vim.lsp.buf.definition, "Go to definition" },
                     ["<leader>wd"] = { vim.lsp.buf.hover, "Show documentation" },
+                    ["<leader>wa"] = { vim.lsp.buf.code_action, "Code action" },
 
                     -- Conflicts with vim.diagnostic.goto_prev (see above)
                     -- vim.keymap.set('n', '<C-k>', vim.lsp.buf.signature_help, bufopts)
@@ -97,8 +124,6 @@ return {
 
                     -- Using native vim feature
                     --["<leader>rn"] = { vim.lsp.buf.rename, "Rename" },
-                    -- Current lsp has no support for this
-                    --["<leader>ca"] = {vim.lsp.buf.code_action, "Code action"},
                     --vim.keymap.set("n", "<space>ca", function()
                     --    vim.lsp.buf.code_action({ apply = true })
                     --end, bufopts)
@@ -290,6 +315,55 @@ return {
             vim.lsp.handlers["textDocument/definition"] = location_handler
             vim.lsp.handlers["textDocument/typeDefinition"] = location_handler
             vim.lsp.handlers["textDocument/implementation"] = location_handler
+
+            -- https://github.com/neovim/nvim-lspconfig/blob/master/doc/server_configurations.md#ltex
+            require("lspconfig").ltex.setup({
+                filetypes = {
+                    -- defaults
+                    "bib",
+                    "gitcommit",
+                    "markdown",
+                    "org",
+                    "plaintex",
+                    "rst",
+                    "rnoweb",
+                    "tex",
+                    "pandoc",
+                    "quarto",
+                    "rmd",
+                    -- added by me
+                    "python",
+                },
+                capabilities = capabilities,
+                on_attach = function(client, bufnr)
+                    on_attach(client, bufnr)
+                    require("ltex_extra").setup({
+                        -- Where to store dictionaries?
+                        path = vim.fn.expand("~") .. "/.local/share/nvim/ltex",
+                    })
+                end,
+                settings = {
+                    -- https://valentjn.github.io/ltex/settings.html
+                    ltex = {
+                        enabled = {
+                            -- defaults
+                            "bib",
+                            "gitcommit",
+                            "markdown",
+                            "org",
+                            "plaintex",
+                            "rst",
+                            "rnoweb",
+                            "tex",
+                            "pandoc",
+                            "quarto",
+                            "rmd",
+                            -- added by me
+                            "python",
+                        },
+                    },
+                },
+            })
         end,
     },
     {
@@ -357,4 +431,5 @@ return {
         event = { "BufReadPre", "BufNewFile" },
         dependencies = { "neovim/nvim-lspconfig" },
     },
+    { "barreiroleo/ltex-extra.nvim" },
 }

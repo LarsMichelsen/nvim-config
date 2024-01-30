@@ -18,6 +18,7 @@ your own config. I've tried to keep it as simple as possible, but it's still a l
 * Copilot integration via [copilot.lua](https://github.com/zbirenbaum/copilot.lua)
 * Git integration via [vim-fugitive](https://github.com/tpope/vim-fugitive).
 * Faster code commenting via [vim-commentary](https://github.com/tpope/vim-commentary).
+* Spelling checking incl. code action to maintain a local dictionary via [LTeX_extra](https://github.com/barreiroleo/ltex_extra.nvim)
 
 And some more. Have a look at the files below `lua/plugins` for a full list.
 
