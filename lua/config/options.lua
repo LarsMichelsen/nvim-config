@@ -63,7 +63,7 @@ local options = {
     -- (Do: sudo apt-get install xsel as written in :help clipboard)
     clipboard = "unnamedplus",
 
-    spelllang = 'en_us,de_de',
+    spelllang = "en_us,de_de",
     spell = true,
 
     syntax = "on",
@@ -73,3 +73,8 @@ local options = {
 for k, v in pairs(options) do
     vim.opt[k] = v
 end
+
+-- Not using this, was causing warnings in :checkhealth
+vim.g.loaded_ruby_provider = 0
+vim.g.loaded_node_provider = 0
+vim.g.loaded_perl_provider = 0
