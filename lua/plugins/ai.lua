@@ -133,33 +133,35 @@ return {
             require("copilot_cmp").setup()
         end,
     },
-    {
-        -- See also https://github.com/jellydn/lazy-nvim-ide/blob/main/lua/plugins/extras/copilot-chat.lua
-        -- for ideas to make more use of it
-        "jellydn/CopilotChat.nvim",
-        opts = {
-            mode = "split",
-            debug = true,
-            -- show_help = "yes",
-            prompts = {
-                Explain = "Explain how it works.",
-                Review = "Review the following code and provide concise suggestions.",
-                Tests = "Briefly explain how the selected code works, then generate unit tests.",
-                Refactor = "Refactor the code to improve clarity and readability.",
-            },
-        },
-        build = function()
-            vim.defer_fn(function()
-                vim.cmd("UpdateRemotePlugins")
-                vim.notify("CopilotChat - Updated remote plugins. Please restart Neovim.")
-            end, 3000)
-        end,
-        event = "VeryLazy",
-        keys = {
-            { "<leader>cce", "<cmd>CopilotChatExplain<cr>", desc = "CopilotChat - Explain code" },
-            { "<leader>cct", "<cmd>CopilotChatTests<cr>", desc = "CopilotChat - Generate tests" },
-            { "<leader>ccr", "<cmd>CopilotChatReview<cr>", desc = "CopilotChat - Review code" },
-            { "<leader>ccR", "<cmd>CopilotChatRefactor<cr>", desc = "CopilotChat - Refactor code" },
-        },
-    },
+    -- Disabled for now - I currently have no access to the chat feature
+    -- {
+    --     -- See also https://github.com/jellydn/lazy-nvim-ide/blob/main/lua/plugins/extras/copilot-chat.lua
+    --     -- for ideas to make more use of it
+    --     "jellydn/CopilotChat.nvim",
+    --     opts = {
+    --         mode = "split",
+    --         debug = true,
+    --         -- show_help = "yes",
+    --         prompts = {
+    --             Explain = "Explain how it works.",
+    --             Review = "Review the following code and provide concise suggestions.",
+    --             Tests = "Briefly explain how the selected code works, then generate unit tests.",
+    --             Refactor = "Refactor the code to improve clarity and readability.",
+    --         },
+    --     },
+    --     branch = "canary",
+    --     build = function()
+    --         vim.defer_fn(function()
+    --             vim.cmd("UpdateRemotePlugins")
+    --             vim.notify("CopilotChat - Updated remote plugins. Please restart Neovim.")
+    --         end, 3000)
+    --     end,
+    --     event = "VeryLazy",
+    --     keys = {
+    --         { "<leader>cce", "<cmd>CopilotChatExplain<cr>", desc = "CopilotChat - Explain code" },
+    --         { "<leader>cct", "<cmd>CopilotChatTests<cr>", desc = "CopilotChat - Generate tests" },
+    --         { "<leader>ccr", "<cmd>CopilotChatReview<cr>", desc = "CopilotChat - Review code" },
+    --         { "<leader>ccR", "<cmd>CopilotChatRefactor<cr>", desc = "CopilotChat - Refactor code" },
+    --     },
+    -- },
 }
