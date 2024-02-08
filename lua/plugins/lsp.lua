@@ -359,7 +359,8 @@ return {
                             "quarto",
                             "rmd",
                             -- added by me
-                            "python",
+                            -- disabled for now. Is a bit too annoying. Needs tuning.
+                            -- "python",
                         },
                     },
                 },
@@ -432,7 +433,8 @@ return {
                 vim.list_extend({ "--indent-type", "Spaces", "--indent-width", "4" }, formatters.stylua.args)
 
             opts.formatters_by_ft = {
-                python = { "isort", "black" },
+                -- Done by pylsp
+                python = {}, -- "isort", "black" },
                 lua = { "stylua" },
                 sh = { "shfmt" },
                 yaml = { "prettier" },
