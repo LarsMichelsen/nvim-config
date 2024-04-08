@@ -180,6 +180,7 @@ return {
             require("lspconfig").pylsp.setup({
                 -- For debugging: tail -f /home/lm/.local/state/nvim/pylsp.log
                 cmd = { "pylsp", "-v", "--log-file", "/home/lm/.local/state/nvim/pylsp.log" },
+                -- format = { timeout_ms = 3000 },
                 capabilities = capabilities,
                 settings = {
                     pylsp = {
@@ -192,11 +193,11 @@ return {
                             pycodestyle = { enabled = false },
                             isort = { enabled = true },
                             pylsp_black = { enabled = true },
-                            mypy = { enabled = true },
+                            pylsp_mypy = { enabled = true },
                             pylint = { enabled = true },
                             mccabe = { enabled = false },
-                            rope_autoimport = { enabled = true },
-                            jedi = { enabled = true },
+                            rope_autoimport = { enabled = false },
+                            jedi = { enabled = false },
                         },
                     },
                 },
@@ -426,15 +427,16 @@ return {
     },
     {
         -- https://github.com/stevearc/conform.nvim
+        -- https://github.com/stevearc/conform.nvim/blob/master/doc/recipes.md
+        -- See also :ConformInfo and ~/.local/state/nvim/conform.log
         "stevearc/conform.nvim",
-        opts = function(_, opts)
-            local formatters = require("conform.formatters")
-            formatters.stylua.args =
-                vim.list_extend({ "--indent-type", "Spaces", "--indent-width", "4" }, formatters.stylua.args)
-
-            opts.formatters_by_ft = {
+        event = { "BufWritePre" },
+        cmd = { "ConformInfo" },
+        opts = {
+            log_level = vim.log.levels.DEBUG,
+            formatters_by_ft = {
                 -- Done by pylsp
-                python = {}, -- "isort", "black" },
+                -- python = { "isort", "black" },
                 lua = { "stylua" },
                 sh = { "shfmt" },
                 yaml = { "prettier" },
@@ -444,14 +446,19 @@ return {
                 --protobuf = { "buf" },
                 dockerfile = { "hadolint" },
                 --dockercompose = { "docker-compose" },
-            }
-
-            opts.format_on_save = {
-                -- These options will be passed to conform.format()
-                timeout_ms = 500,
-                lsp_fallback = true,
-            }
-        end,
+            },
+            -- Set up format-on-save
+            format_on_save = { timeout_ms = 500, lsp_fallback = true },
+            -- Customize formatters
+            formatters = {
+                stylua = {
+                    prepend_args = { "--indent-type", "Spaces", "--indent-width", "4" },
+                },
+                shfmt = {
+                    prepend_args = { "-ci", "-i", "4" },
+                },
+            },
+        },
     },
     {
         -- https://github.com/mfussenegger/nvim-lint
