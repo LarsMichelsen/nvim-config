@@ -15,9 +15,12 @@ return {
                     width = 0.95,
                     row = 0.30,
                     col = 0.30,
+                    preview = {
+                        horizontal = "right:40%",
+                    },
                 },
                 files = {
-                    rg_opts = '--smart-case -g "!{.git,node_modules,.mypy_cache,swagger-ui-3}/*" -g !redoc.standalone.js -g !Pipfile.lock',
+                    rg_opts = '--smart-case -g "!{.git,node_modules,.mypy_cache,swagger-ui-3,tests/qa-test-data}/*" -g !redoc.standalone.js -g !Pipfile.lock',
                 },
                 actions = {
                     files = {
