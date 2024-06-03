@@ -90,6 +90,7 @@ return {
                         home_dir .. "/git/cma/",
                         home_dir .. "/git/cma-%d%.%d/",
                         home_dir .. "/git/lm/nagvis/",
+                        home_dir .. "/git/cmk-app/",
                     }
                     for _, pattern in ipairs(enable_patterns) do
                         if (bufname == "" and cwd:match("^" .. pattern)) or bufname:match("^" .. pattern) then

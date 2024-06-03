@@ -194,7 +194,8 @@ return {
                             isort = { enabled = true },
                             pylsp_black = { enabled = true },
                             pylsp_mypy = { enabled = true },
-                            pylint = { enabled = true },
+                            pylint_lint = { enabled = true },
+                            pylsp_ruff = { enabled = false },
                             mccabe = { enabled = false },
                             rope_autoimport = { enabled = false },
                             jedi = { enabled = false },
@@ -207,8 +208,11 @@ return {
                     -- https://github.com/neovim/nvim-lspconfig/wiki/Project-local-settings#configure-in-your-personal-settings-initlua
                     local path = client.workspace_folders[1].name
 
-                    if string.find(path, "git/checkmk-2.1.0") ~= nil then
-                    -- client.config.settings.pylsp.plugins.pylint.args = {'-j', '0', '--rcfile', '/home/lm/git/checkmk-2.1.0/.pylintrc'}
+                    if string.find(path, "git/cmk-app") ~= nil then
+                        client.config.settings.pylsp.plugins.pylint_lint.enabled = false
+                        client.config.settings.pylsp.plugins.pylsp_ruff.enabled = true
+                    elseif string.find(path, "git/checkmk-2.1.0") ~= nil then
+                    -- client.config.settings.pylsp.plugins.pylint_lint.args = {'-j', '0', '--rcfile', '/home/lm/git/checkmk-2.1.0/.pylintrc'}
                     -- client.config.settings.pylsp.plugins.isort.executable = path + '/scripts/run-isort'
                     elseif
                         string.find(path, "git/checkmk-2.0.0") ~= nil or string.find(path, "git/checkmk-1.") ~= nil
