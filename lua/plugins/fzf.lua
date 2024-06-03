@@ -19,8 +19,14 @@ return {
                         horizontal = "right:40%",
                     },
                 },
+                grep = {
+                    rg_opts = '--smart-case -g "!{.git,node_modules,.mypy_cache,swagger-ui-3,tests/qa-test-data,third_party}/*" -g !redoc.standalone.js -g "!*.lock" --type-not svg --type-not po',
+                },
                 files = {
-                    rg_opts = '--smart-case -g "!{.git,node_modules,.mypy_cache,swagger-ui-3,tests/qa-test-data}/*" -g !redoc.standalone.js -g !Pipfile.lock',
+                    rg_opts = '--smart-case -g "!{.git,node_modules,.mypy_cache,swagger-ui-3,tests/qa-test-data}/*" -g "!third_party/*" -g !redoc.standalone.js -g "!*.lock" --type-not svg --type-not po',
+                },
+                oldfiles = {
+                    include_current_session = true,
                 },
                 actions = {
                     files = {
@@ -40,6 +46,7 @@ return {
                 ["<C-l>"] = { "<cmd>lua require('fzf-lua').git_bcommits()<CR>", "Find git commits" },
                 ["<C-b>"] = { "<cmd>lua require('fzf-lua').buffers()<CR>", "Find buffers" },
                 ["<C-h>"] = { "<cmd>lua require('fzf-lua').oldfiles()<CR>", "Find file history" },
+                --["<C-a>"] = { "<cmd>lua require('fzf-lua').grep_project()<CR>", "Find in files" },
                 ["<C-a>"] = { "<cmd>lua require('fzf-lua').live_grep_native()<CR>", "Find in files" },
                 ["<leader>wf"] = { "<cmd>lua require('fzf-lua').grep_cword()<CR>", "Find word under cursor" },
             })

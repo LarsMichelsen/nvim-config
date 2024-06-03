@@ -452,7 +452,7 @@ return {
                 --dockercompose = { "docker-compose" },
             },
             -- Set up format-on-save
-            format_on_save = { timeout_ms = 500, lsp_fallback = true },
+            format_on_save = { timeout_ms = 500, lsp_fallback = false },
             -- Customize formatters
             formatters = {
                 stylua = {
