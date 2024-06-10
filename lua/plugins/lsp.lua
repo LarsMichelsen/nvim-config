@@ -195,7 +195,7 @@ return {
                             pylsp_black = { enabled = true },
                             pylsp_mypy = { enabled = true },
                             pylint_lint = { enabled = true },
-                            pylsp_ruff = { enabled = false },
+                            ruff = { enabled = false },
                             mccabe = { enabled = false },
                             rope_autoimport = { enabled = false },
                             jedi = { enabled = false },
@@ -208,19 +208,23 @@ return {
                     -- https://github.com/neovim/nvim-lspconfig/wiki/Project-local-settings#configure-in-your-personal-settings-initlua
                     local path = client.workspace_folders[1].name
 
-                    if string.find(path, "git/cmk-app") ~= nil then
+                    -- see lua pattern matchin https://www.lua.org/pil/20.2.html
+                    if string.find(path, "git/cmk%-app") ~= nil then
                         client.config.settings.pylsp.plugins.pylint_lint.enabled = false
-                        client.config.settings.pylsp.plugins.pylsp_ruff.enabled = true
-                    elseif string.find(path, "git/checkmk-2.1.0") ~= nil then
+                        client.config.settings.pylsp.plugins.pylsp_black.enabled = false
+                        client.config.settings.pylsp.plugins.isort.enabled = false
+                        client.config.settings.pylsp.plugins.ruff.enabled = true
+                        client.config.settings.pylsp.plugins.ruff.format_enabled = true
+                    elseif string.find(path, "git/checkmk%-2%.1%.0") ~= nil then
                     -- client.config.settings.pylsp.plugins.pylint_lint.args = {'-j', '0', '--rcfile', '/home/lm/git/checkmk-2.1.0/.pylintrc'}
                     -- client.config.settings.pylsp.plugins.isort.executable = path + '/scripts/run-isort'
                     elseif
-                        string.find(path, "git/checkmk-2.0.0") ~= nil or string.find(path, "git/checkmk-1.") ~= nil
+                        string.find(path, "git/checkmk%-2%.0%.0") ~= nil
+                        or string.find(path, "git/checkmk%-1%.") ~= nil
                     then
                         client.config.settings.pylsp.plugins.yapf.enabled = true
                         client.config.settings.pylsp.plugins.pylsp_black.enabled = false
                     elseif string.find(path, "git/cma") ~= nil then
-                        -- client.config.settings.pylsp.plugins.yapf.enabled = true
                         client.config.settings.pylsp.plugins.jedi.extra_paths = {
                             "/home/lm/git/cma/packages/cma",
                             "/home/lm/git/cma/packages/cmabackup",
@@ -234,6 +238,9 @@ return {
                         client.config.settings.pylsp.plugins.yapf.enabled = false
                         client.config.settings.pylsp.plugins.pylsp_black.enabled = true
                     end
+
+                    -- print the pylsp settings to the log
+                    --vim.notify(vim.inspect(client.config.settings.pylsp))
 
                     client.notify("workspace/didChangeConfiguration", { settings = client.config.settings })
                     return true
