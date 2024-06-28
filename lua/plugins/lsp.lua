@@ -194,6 +194,7 @@ return {
                             isort = { enabled = true },
                             pylsp_black = { enabled = true },
                             pylsp_mypy = { enabled = true },
+                            pylint = { enabled = true },
                             pylint_lint = { enabled = true },
                             ruff = { enabled = false },
                             mccabe = { enabled = false },
