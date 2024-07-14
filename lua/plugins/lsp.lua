@@ -39,7 +39,7 @@ return {
                 pattern = "MasonToolsUpdateCompleted",
                 callback = function(e)
                     vim.schedule(function()
-                        print(vim.inspect(e.data)) -- print the table that lists the programs that were installed
+                        -- print(vim.inspect(e.data)) -- print the table that lists the programs that were installed
                     end)
                 end,
             })
@@ -99,18 +99,18 @@ return {
                 vim.api.nvim_buf_set_option(bufnr, "omnifunc", "v:lua.vim.lsp.omnifunc")
 
                 -- Mappings.
-                require("which-key").register({
-                    ["<C-k>"] = { vim.diagnostic.goto_prev, "Previous finding" },
-                    ["<C-j>"] = { vim.diagnostic.goto_next, "Next finding" },
+                require("which-key").add({
+                    { "<C-k>", vim.diagnostic.goto_prev, desc = "Previous finding" },
+                    { "<C-j>", vim.diagnostic.goto_next, desc = "Next finding" },
 
                     -- Not used / supported by my lsp so far
                     -- vim.keymap.set('n', 'gD', vim.lsp.buf.declaration, bufopts)
                     -- vim.keymap.set('n', 'gi', vim.lsp.buf.implementation, bufopts)
                     -- vim.keymap.set('n', '<space>D', vim.lsp.buf.type_definition, bufopts)
 
-                    ["<leader>d"] = { vim.lsp.buf.definition, "Go to definition" },
-                    ["<leader>wd"] = { vim.lsp.buf.hover, "Show documentation" },
-                    ["<leader>wa"] = { vim.lsp.buf.code_action, "Code action" },
+                    { "<leader>d", vim.lsp.buf.definition, desc = "Go to definition" },
+                    { "<leader>wd", vim.lsp.buf.hover, desc = "Show documentation" },
+                    { "<leader>wa", vim.lsp.buf.code_action, desc = "Code action" },
 
                     -- Conflicts with vim.diagnostic.goto_prev (see above)
                     -- vim.keymap.set('n', '<C-k>', vim.lsp.buf.signature_help, bufopts)
@@ -128,7 +128,7 @@ return {
                     --    vim.lsp.buf.code_action({ apply = true })
                     --end, bufopts)
 
-                    ["<leader>wc"] = { vim.lsp.buf.references, "Find references" },
+                    { "<leader>wc", vim.lsp.buf.references, desc = "Find references" },
 
                     -- No need to trigger manually - doing format on save (see below)
                     --["<leader>f"] = { vim.lsp.buf.formatting, "Format" },

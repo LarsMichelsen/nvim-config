@@ -32,10 +32,10 @@ map("n", "n", "nzz")
 map("n", "<Down>", "gj")
 map("n", "<Up>", "gk")
 
-wk.register({
-    ["<leader>wr"] = { ":%s/<C-r><C-w>//g<Left><Left>", "Replace word under cursor" },
-    ["<C-f>"] = { ":%s/<C-r><C-w>//g<Left><Left>", "Replace word under cursor" },
-    ["<leader>gb"] = { ":Git blame<CR>", "Git blame" },
-    ["<F10>"] = { ':exec &bg=="light"? "set bg=dark" : "set bg=light"<CR>', "Toggle light/dark mode" },
-    ["<F12>"] = { ":w<CR>:!sudo /home/lm/git/zeug_cmk/bin/f12 %:p<CR>", "Deploy" },
+wk.add({
+    { "<C-f>", ":%s/<C-r><C-w>//g<Left><Left>", desc = "Replace word under cursor" },
+    { "<F10>", ':exec &bg=="light"? "set bg=dark" : "set bg=light"<CR>', desc = "Toggle light/dark mode" },
+    { "<F12>", ":w<CR>:!sudo /home/lm/git/zeug_cmk/bin/f12 %:p<CR>", desc = "Deploy" },
+    { "<leader>gb", ":Git blame<CR>", desc = "Git blame" },
+    { "<leader>wr", ":%s/<C-r><C-w>//g<Left><Left>", desc = "Replace word under cursor" },
 })

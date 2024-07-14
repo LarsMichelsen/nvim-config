@@ -40,15 +40,14 @@ return {
         end,
         init = function()
             local wk = require("which-key")
-            wk.register({
-                ["<C-t>"] = { "<cmd>lua require('fzf-lua').files()<CR>", "Find files" },
-                ["<C-p>"] = { "<cmd>lua require('fzf-lua').git_files()<CR>", "Find git files" },
-                ["<C-l>"] = { "<cmd>lua require('fzf-lua').git_bcommits()<CR>", "Find git commits" },
-                ["<C-b>"] = { "<cmd>lua require('fzf-lua').buffers()<CR>", "Find buffers" },
-                ["<C-h>"] = { "<cmd>lua require('fzf-lua').oldfiles()<CR>", "Find file history" },
-                --["<C-a>"] = { "<cmd>lua require('fzf-lua').grep_project()<CR>", "Find in files" },
-                ["<C-a>"] = { "<cmd>lua require('fzf-lua').live_grep_native()<CR>", "Find in files" },
-                ["<leader>wf"] = { "<cmd>lua require('fzf-lua').grep_cword()<CR>", "Find word under cursor" },
+            wk.add({
+                { "<C-a>", "<cmd>lua require('fzf-lua').live_grep_native()<CR>", desc = "Find in files" },
+                { "<C-b>", "<cmd>lua require('fzf-lua').buffers()<CR>", desc = "Find buffers" },
+                { "<C-h>", "<cmd>lua require('fzf-lua').oldfiles()<CR>", desc = "Find file history" },
+                { "<C-l>", "<cmd>lua require('fzf-lua').git_bcommits()<CR>", desc = "Find git commits" },
+                { "<C-p>", "<cmd>lua require('fzf-lua').git_files()<CR>", desc = "Find git files" },
+                { "<C-t>", "<cmd>lua require('fzf-lua').files()<CR>", desc = "Find files" },
+                { "<leader>wf", "<cmd>lua require('fzf-lua').grep_cword()<CR>", desc = "Find word under cursor" },
             })
         end,
     },
