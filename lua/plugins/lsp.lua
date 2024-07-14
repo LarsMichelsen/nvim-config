@@ -234,6 +234,17 @@ return {
                             "/home/lm/git/cma/packages/setup",
                             "/home/lm/git/cma/packages/webconf",
                         }
+                    elseif string.find(path, "git/opentelemetry") ~= nil then
+                        client.config.settings.pylsp.plugins.pylsp_black.enabled = false
+                        client.config.settings.pylsp.plugins.isort.enabled = false
+                        client.config.settings.pylsp.plugins.ruff.enabled = false
+                        client.config.settings.pylsp.plugins.ruff.format_enabled = false
+                        client.config.settings.pylsp.plugins.pylint.args =
+                            { "-j4", "--rcfile=/home/lm/git/opentelemetry-python/.pylintrc" }
+                        client.config.settings.pylsp.plugins.pylsp_mypy.enabled = false
+                        client.config.settings.pylsp.plugins.pylsp_mypy.config_sub_paths = {
+                            "/home/lm/git/opentelemetry-python/mypy.ini",
+                        }
                     else
                         -- enforce the default settings
                         client.config.settings.pylsp.plugins.yapf.enabled = false

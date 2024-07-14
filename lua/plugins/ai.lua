@@ -134,35 +134,54 @@ return {
             require("copilot_cmp").setup()
         end,
     },
-    -- Disabled for now - I currently have no access to the chat feature
-    -- {
-    --     -- See also https://github.com/jellydn/lazy-nvim-ide/blob/main/lua/plugins/extras/copilot-chat.lua
-    --     -- for ideas to make more use of it
-    --     "jellydn/CopilotChat.nvim",
-    --     opts = {
-    --         mode = "split",
-    --         debug = true,
-    --         -- show_help = "yes",
-    --         prompts = {
-    --             Explain = "Explain how it works.",
-    --             Review = "Review the following code and provide concise suggestions.",
-    --             Tests = "Briefly explain how the selected code works, then generate unit tests.",
-    --             Refactor = "Refactor the code to improve clarity and readability.",
-    --         },
-    --     },
-    --     branch = "canary",
-    --     build = function()
-    --         vim.defer_fn(function()
-    --             vim.cmd("UpdateRemotePlugins")
-    --             vim.notify("CopilotChat - Updated remote plugins. Please restart Neovim.")
-    --         end, 3000)
-    --     end,
-    --     event = "VeryLazy",
-    --     keys = {
-    --         { "<leader>cce", "<cmd>CopilotChatExplain<cr>", desc = "CopilotChat - Explain code" },
-    --         { "<leader>cct", "<cmd>CopilotChatTests<cr>", desc = "CopilotChat - Generate tests" },
-    --         { "<leader>ccr", "<cmd>CopilotChatReview<cr>", desc = "CopilotChat - Review code" },
-    --         { "<leader>ccR", "<cmd>CopilotChatRefactor<cr>", desc = "CopilotChat - Refactor code" },
-    --     },
-    -- },
+    {
+        -- See also https://github.com/jellydn/lazy-nvim-ide/blob/main/lua/plugins/extras/copilot-chat-v2.lua
+        -- for ideas to make more use of it
+        "CopilotC-Nvim/CopilotChat.nvim",
+        dependencies = {
+            { "zbirenbaum/copilot.lua" }, -- or github/copilot.vim
+            { "nvim-lua/plenary.nvim" }, -- for curl, log wrapper
+        },
+        opts = {
+            mode = "split",
+            debug = true,
+            -- show_help = "yes",
+            prompts = {
+                -- Code related prompts
+                Explain = "Please explain how the following code works.",
+                Review = "Please review the following code and provide suggestions for improvement.",
+                Tests = "Please explain how the selected code works, then generate unit tests for it.",
+                Refactor = "Please refactor the following code to improve its clarity and readability.",
+                FixCode = "Please fix the following code to make it work as intended.",
+                FixError = "Please explain the error in the following text and provide a solution.",
+                BetterNamings = "Please provide better names for the following variables and functions.",
+                Documentation = "Please provide documentation for the following code.",
+                -- Text related prompts
+                Summarize = "Please summarize the following text.",
+                Spelling = "Please correct any grammar and spelling errors in the following text.",
+                Wording = "Please improve the grammar and wording of the following text.",
+                Concise = "Please rewrite the following text to make it more concise.",
+            },
+        },
+        branch = "canary",
+        build = function()
+            vim.defer_fn(function()
+                vim.cmd("UpdateRemotePlugins")
+                vim.notify("CopilotChat - Updated remote plugins. Please restart Neovim.")
+            end, 3000)
+        end,
+        event = "VeryLazy",
+        keys = {
+            { "<leader>ae", "<cmd>CopilotChatExplain<cr>", desc = "Chat - Explain code" },
+            { "<leader>at", "<cmd>CopilotChatTests<cr>", desc = "Chat - Generate tests" },
+            { "<leader>ar", "<cmd>CopilotChatReview<cr>", desc = "Chat - Review code" },
+            { "<leader>aR", "<cmd>CopilotChatRefactor<cr>", desc = "Chat - Refactor code" },
+            { "<leader>an", "<cmd>CopilotChatBetterNamings<cr>", desc = "Chat - Better naming" },
+            { "<leader>af", "<cmd>CopilotChatFixCode<cr>", desc = "Chat - Fix code" },
+            { "<leader>as", "<cmd>CopilotChatSummarize<cr>", desc = "Chat - Summarize text" },
+            { "<leader>aS", "<cmd>CopilotChatSummarize<cr>", desc = "Chat - Spelling text" },
+            { "<leader>aw", "<cmd>CopilotChatWording<cr>", desc = "Chat - Improve text" },
+            { "<leader>ac", "<cmd>CopilotChatConcise<cr>", desc = "Chat - Concise text" },
+        },
+    },
 }
