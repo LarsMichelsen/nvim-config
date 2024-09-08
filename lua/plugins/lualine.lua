@@ -46,26 +46,35 @@ return {
                     },
                     lualine_c = {
                         {
-                            "navic",
-                            navic_opts = {
-                                highlight = true,
-                            },
+                            "filename",
+                            path = 1,
                         },
                     },
+                    -- Replaced with dropbar
+                    -- lualine_c = {
+                    --     {
+                    --         "navic",
+                    --         navic_opts = {
+                    --             highlight = true,
+                    --         },
+                    --     },
+                    -- },
                     lualine_x = {
                         -- see https://github.com/AndreM222/copilot-lualine
+                    },
+                    -- replaced with fidget
+                    -- lualine_y = {
+                    --     require("lsp-progress").progress,
+                    -- },
+                    lualine_y = {},
+                    lualine_z = {
                         "copilot",
-                        -- "encoding",
                     },
-                    lualine_y = {
-                        require("lsp-progress").progress,
-                    },
-                    lualine_z = {},
                 },
                 inactive_sections = {
                     lualine_a = {},
                     lualine_b = {},
-                    lualine_c = { "filename" },
+                    lualine_c = { "path" },
                     lualine_x = { "location" },
                     lualine_y = {},
                     lualine_z = {},
