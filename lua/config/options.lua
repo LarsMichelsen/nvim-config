@@ -45,6 +45,7 @@ local options = {
     -- https://neovim.io/doc/user/change.html#fo-table
     formatoptions = vim.opt["formatoptions"]._value .. "l",
     textwidth = 100,
+    colorcolumn = "100",
 
     tabpagemax = 100,
 

@@ -209,7 +209,7 @@ return {
                     -- https://github.com/neovim/nvim-lspconfig/wiki/Project-local-settings#configure-in-your-personal-settings-initlua
                     local path = client.workspace_folders[1].name
 
-                    -- see lua pattern matchin https://www.lua.org/pil/20.2.html
+                    -- see lua pattern matching: https://www.lua.org/pil/20.2.html
                     if string.find(path, "git/cmk%-app") ~= nil then
                         client.config.settings.pylsp.plugins.pylint_lint.enabled = false
                         client.config.settings.pylsp.plugins.pylsp_black.enabled = false
@@ -217,8 +217,10 @@ return {
                         client.config.settings.pylsp.plugins.ruff.enabled = true
                         client.config.settings.pylsp.plugins.ruff.format_enabled = true
                     elseif string.find(path, "git/checkmk%-2%.1%.0") ~= nil then
-                    -- client.config.settings.pylsp.plugins.pylint_lint.args = {'-j', '0', '--rcfile', '/home/lm/git/checkmk-2.1.0/.pylintrc'}
-                    -- client.config.settings.pylsp.plugins.isort.executable = path + '/scripts/run-isort'
+                        -- client.config.settings.pylsp.plugins.pylint_lint.args = {'-j', '0', '--rcfile', '/home/lm/git/checkmk-2.1.0/.pylintrc'}
+                        -- client.config.settings.pylsp.plugins.isort.executable = path + '/scripts/run-isort'
+                        client.config.settings.pylsp.plugins.pylsp_black.enabled = false
+                        client.config.settings.pylsp.plugins.isort.enabled = false
                     elseif
                         string.find(path, "git/checkmk%-2%.0%.0") ~= nil
                         or string.find(path, "git/checkmk%-1%.") ~= nil
@@ -258,6 +260,34 @@ return {
                     return true
                 end,
             })
+
+            require("lspconfig").ruff.setup({
+                init_options = {
+                    settings = {
+                        lint = {
+                            enable = true,
+                        },
+                        -- logLevel = 'debug',
+                        -- :lua vim.print(vim.lsp.get_log_path())
+                    },
+                },
+                on_init = function(client)
+                    -- https://github.com/neovim/nvim-lspconfig/wiki/Project-local-settings#configure-in-your-personal-settings-initlua
+                    local path = client.workspace_folders[1].name
+
+                    -- print the settings to the log
+                    --vim.notify(vim.inspect(client.config.settings.ruff))
+                    --
+                    -- see lua pattern matching: https://www.lua.org/pil/20.2.html
+                    if string.find(path, "git/checkmk%-2%.1%.0") ~= nil then
+                        client.config.settings.ruff.lint.enable = false
+                    end
+
+                    client.notify("workspace/didChangeConfiguration", { settings = client.config.settings })
+                    return true
+                end,
+            })
+
             -- I don't like displaying the "virtual text" on the code - too much visual clutter for me
             vim.lsp.handlers["textDocument/publishDiagnostics"] =
                 vim.lsp.with(vim.lsp.diagnostic.on_publish_diagnostics, {
@@ -394,60 +424,61 @@ return {
     {
         "neovim/nvim-lspconfig",
     },
-    {
-        -- https://github.com/linrongbin16/lsp-progress.nvim
-        "linrongbin16/lsp-progress.nvim",
-        config = function()
-            require("lsp-progress").setup({
-                -- Show all active client names
-                -- https://github.com/linrongbin16/lsp-progress.nvim/wiki/Advanced-Configuration
-                client_format = function(client_name, spinner, series_messages)
-                    if #series_messages == 0 then
-                        return nil
-                    end
-                    return {
-                        name = client_name,
-                        body = spinner .. " " .. table.concat(series_messages, ", "),
-                    }
-                end,
-                format = function(client_messages)
-                    --- @param name string
-                    --- @param msg string?
-                    --- @return string
-                    local function stringify(name, msg)
-                        return msg and string.format("%s %s", name, msg) or name
-                    end
+    -- replaced with fidget
+    -- {
+    --     -- https://github.com/linrongbin16/lsp-progress.nvim
+    --     "linrongbin16/lsp-progress.nvim",
+    --     config = function()
+    --         require("lsp-progress").setup({
+    --             -- Show all active client names
+    --             -- https://github.com/linrongbin16/lsp-progress.nvim/wiki/Advanced-Configuration
+    --             client_format = function(client_name, spinner, series_messages)
+    --                 if #series_messages == 0 then
+    --                     return nil
+    --                 end
+    --                 return {
+    --                     name = client_name,
+    --                     body = spinner .. " " .. table.concat(series_messages, ", "),
+    --                 }
+    --             end,
+    --             format = function(client_messages)
+    --                 --- @param name string
+    --                 --- @param msg string?
+    --                 --- @return string
+    --                 local function stringify(name, msg)
+    --                     return msg and string.format("%s %s", name, msg) or name
+    --                 end
 
-                    local sign = "" -- nf-fa-gear \uf013
-                    local lsp_clients = vim.lsp.get_active_clients()
-                    local messages_map = {}
-                    for _, climsg in ipairs(client_messages) do
-                        messages_map[climsg.name] = climsg.body
-                    end
+    --                 local sign = "" -- nf-fa-gear \uf013
+    --                 local lsp_clients = vim.lsp.get_active_clients()
+    --                 local messages_map = {}
+    --                 for _, climsg in ipairs(client_messages) do
+    --                     messages_map[climsg.name] = climsg.body
+    --                 end
 
-                    if #lsp_clients > 0 then
-                        table.sort(lsp_clients, function(a, b)
-                            return a.name < b.name
-                        end)
-                        local builder = {}
-                        for _, cli in ipairs(lsp_clients) do
-                            if type(cli) == "table" and type(cli.name) == "string" and string.len(cli.name) > 0 then
-                                if messages_map[cli.name] then
-                                    table.insert(builder, stringify(cli.name, messages_map[cli.name]))
-                                else
-                                    table.insert(builder, stringify(cli.name))
-                                end
-                            end
-                        end
-                        if #builder > 0 then
-                            return sign .. " " .. table.concat(builder, ", ")
-                        end
-                    end
-                    return ""
-                end,
-            })
-        end,
-    },
+    --                 if #lsp_clients > 0 then
+    --                     table.sort(lsp_clients, function(a, b)
+    --                         return a.name < b.name
+    --                     end)
+    --                     local builder = {}
+    --                     for _, cli in ipairs(lsp_clients) do
+    --                         if type(cli) == "table" and type(cli.name) == "string" and string.len(cli.name) > 0 then
+    --                             if messages_map[cli.name] then
+    --                                 table.insert(builder, stringify(cli.name, messages_map[cli.name]))
+    --                             else
+    --                                 table.insert(builder, stringify(cli.name))
+    --                             end
+    --                         end
+    --                     end
+    --                     if #builder > 0 then
+    --                         return sign .. " " .. table.concat(builder, ", ")
+    --                     end
+    --                 end
+    --                 return ""
+    --             end,
+    --         })
+    --     end,
+    -- },
     {
         -- https://github.com/stevearc/conform.nvim
         -- https://github.com/stevearc/conform.nvim/blob/master/doc/recipes.md
@@ -469,6 +500,7 @@ return {
                 --protobuf = { "buf" },
                 dockerfile = { "hadolint" },
                 --dockercompose = { "docker-compose" },
+                bzl = { "buildifier" },
             },
             -- Set up format-on-save
             format_on_save = { timeout_ms = 500, lsp_fallback = false },
