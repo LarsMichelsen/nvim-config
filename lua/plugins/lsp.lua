@@ -56,6 +56,7 @@ return {
             opts.ensure_installed = {
                 -- python
                 "pylsp",
+                "ruff",
                 -- lua
                 "lua_ls",
                 -- shell
@@ -135,23 +136,23 @@ return {
                 }, { buffer = bufnr })
 
                 -- Run formatting automatically on save
-                local augroup = vim.api.nvim_create_augroup("LspFormatting", { clear = true })
-                vim.api.nvim_create_autocmd("BufWritePre", {
-                    pattern = "*",
-                    group = augroup,
-                    callback = function()
-                        vim.lsp.buf.format({
-                            timeout_ms = 2000,
-                            filter = function(clients)
-                                return vim.tbl_filter(function(client)
-                                    return pcall(function(_client)
-                                        return _client.config.settings.autoFixOnSave or false
-                                    end, client) or false
-                                end, clients)
-                            end,
-                        })
-                    end,
-                })
+                -- local augroup = vim.api.nvim_create_augroup("LspFormatting", { clear = true })
+                -- vim.api.nvim_create_autocmd("BufWritePre", {
+                --     pattern = "*",
+                --     group = augroup,
+                --     callback = function()
+                --         vim.lsp.buf.format({
+                --             timeout_ms = 2000,
+                --             filter = function(clients)
+                --                 return vim.tbl_filter(function(client)
+                --                     return pcall(function(_client)
+                --                         return _client.config.settings.autoFixOnSave or false
+                --                     end, client) or false
+                --                 end, clients)
+                --             end,
+                --         })
+                --     end,
+                -- })
 
                 -- open diagnostic on cursor position
                 vim.api.nvim_create_autocmd("CursorHold", {
@@ -191,8 +192,8 @@ return {
                             pyflakes = { enabled = false },
                             yapf = { enabled = false },
                             pycodestyle = { enabled = false },
-                            isort = { enabled = true },
-                            pylsp_black = { enabled = true },
+                            isort = { enabled = false },
+                            pylsp_black = { enabled = false },
                             pylsp_mypy = { enabled = true },
                             pylint = { enabled = true },
                             pylint_lint = { enabled = true },
@@ -216,6 +217,11 @@ return {
                         client.config.settings.pylsp.plugins.isort.enabled = false
                         client.config.settings.pylsp.plugins.ruff.enabled = true
                         client.config.settings.pylsp.plugins.ruff.format_enabled = true
+                    elseif string.find(path, "git/checkmk") ~= nil then
+                        client.config.settings.pylsp.plugins.pylsp_black.enabled = false
+                        client.config.settings.pylsp.plugins.ruff.enabled = false
+                        client.config.settings.pylsp.plugins.isort.enabled = false
+                        client.config.settings.pylsp.plugins.yapf.enabled = false
                     elseif string.find(path, "git/checkmk%-2%.1%.0") ~= nil then
                         -- client.config.settings.pylsp.plugins.pylint_lint.args = {'-j', '0', '--rcfile', '/home/lm/git/checkmk-2.1.0/.pylintrc'}
                         -- client.config.settings.pylsp.plugins.isort.executable = path + '/scripts/run-isort'
@@ -254,39 +260,43 @@ return {
                     end
 
                     -- print the pylsp settings to the log
-                    --vim.notify(vim.inspect(client.config.settings.pylsp))
+                    -- vim.notify(vim.inspect(client.config.settings.pylsp))
 
                     client.notify("workspace/didChangeConfiguration", { settings = client.config.settings })
                     return true
                 end,
             })
 
-            require("lspconfig").ruff.setup({
-                init_options = {
-                    settings = {
-                        lint = {
-                            enable = true,
-                        },
-                        -- logLevel = 'debug',
-                        -- :lua vim.print(vim.lsp.get_log_path())
-                    },
-                },
-                on_init = function(client)
-                    -- https://github.com/neovim/nvim-lspconfig/wiki/Project-local-settings#configure-in-your-personal-settings-initlua
-                    local path = client.workspace_folders[1].name
+            -- organizeImports does not work at the moment. Using ruff_* of conform for now.
+            -- require("lspconfig").ruff.setup({
+            --     trace = "messages",
+            --     init_options = {
+            --         settings = {
+            --             -- organizeImports does not seem to work at the moment. Falling back to
+            --             -- conform for now.
+            --             organizeImports = false,
+            --             fixAll = true,
+            --             -- logLevel = "debug",
+            --             --logFile = "/home/lm/.local/state/nvim/ruff.log",
+            --             -- :lua vim.print(vim.lsp.get_log_path())
+            --         },
+            --     },
+            --     on_init = function(client)
+            --         -- https://github.com/neovim/nvim-lspconfig/wiki/Project-local-settings#configure-in-your-personal-settings-initlua
+            --         local path = client.workspace_folders[1].name
 
-                    -- print the settings to the log
-                    --vim.notify(vim.inspect(client.config.settings.ruff))
-                    --
-                    -- see lua pattern matching: https://www.lua.org/pil/20.2.html
-                    if string.find(path, "git/checkmk%-2%.1%.0") ~= nil then
-                        client.config.settings.ruff.lint.enable = false
-                    end
+            --         -- print the settings to the log
+            --         --vim.notify(vim.inspect(client.config.settings.ruff))
+            --         --
+            --         -- see lua pattern matching: https://www.lua.org/pil/20.2.html
+            --         if string.find(path, "git/checkmk%-2%.1%.0") ~= nil then
+            --             client.config.settings.ruff.lint.enable = false
+            --         end
 
-                    client.notify("workspace/didChangeConfiguration", { settings = client.config.settings })
-                    return true
-                end,
-            })
+            --         client.notify("workspace/didChangeConfiguration", { settings = client.config.settings })
+            --         return true
+            --     end,
+            -- })
 
             -- I don't like displaying the "virtual text" on the code - too much visual clutter for me
             vim.lsp.handlers["textDocument/publishDiagnostics"] =
@@ -386,7 +396,7 @@ return {
                     "quarto",
                     "rmd",
                     -- added by me
-                    "python",
+                    --"python",
                 },
                 capabilities = capabilities,
                 on_attach = function(client, bufnr)
@@ -489,8 +499,7 @@ return {
         opts = {
             log_level = vim.log.levels.DEBUG,
             formatters_by_ft = {
-                -- Done by pylsp
-                -- python = { "isort", "black" },
+                python = { "ruff_fix", "ruff_format", "ruff_organize_imports" },
                 lua = { "stylua" },
                 sh = { "shfmt" },
                 yaml = { "prettier" },
