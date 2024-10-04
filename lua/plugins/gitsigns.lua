@@ -45,7 +45,7 @@ return {
     dependencies = "nvim-lua/plenary.nvim",
     keys = {
         {
-            "<leader>gB",
+            "<leader>gb",
             function()
                 require("gitsigns").blame()
             end,
@@ -93,9 +93,9 @@ return {
             vim.keymap.set("n", "<leader>gS", gitsigns.stage_buffer, { buffer = bufnr, desc = "Stage buffer" })
             vim.keymap.set("n", "<leader>gR", gitsigns.reset_buffer, { buffer = bufnr, desc = "Reset buffer" })
             vim.keymap.set("n", "<leader>gp", gitsigns.preview_hunk, { buffer = bufnr, desc = "Preview hunk" })
-            vim.keymap.set("n", "<leader>gb", function()
-                gitsigns.blame_line({ full = true })
-            end, { buffer = bufnr, desc = "Blame line" })
+            -- vim.keymap.set("n", "<leader>gb", function()
+            --     gitsigns.blame_line({ full = true })
+            -- end, { buffer = bufnr, desc = "Blame line" })
 
             vim.keymap.set("n", "<leader>td", gitsigns.toggle_deleted, { buffer = bufnr, desc = "Deleted" })
             vim.keymap.set(
