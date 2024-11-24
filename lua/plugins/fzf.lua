@@ -42,6 +42,7 @@ return {
             local wk = require("which-key")
             wk.add({
                 { "<C-a>", "<cmd>lua require('fzf-lua').live_grep_native()<CR>", desc = "Find in files" },
+                { "<C-s>", "<cmd>lua require('fzf-lua').resume()<CR>", desc = "Resume last" },
                 { "<C-b>", "<cmd>lua require('fzf-lua').buffers()<CR>", desc = "Find buffers" },
                 { "<C-h>", "<cmd>lua require('fzf-lua').oldfiles()<CR>", desc = "Find file history" },
                 { "<C-l>", "<cmd>lua require('fzf-lua').git_bcommits()<CR>", desc = "Find git commits" },
