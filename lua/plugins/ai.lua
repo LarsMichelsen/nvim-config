@@ -163,7 +163,7 @@ return {
                 Concise = "Please rewrite the following text to make it more concise.",
             },
         },
-        branch = "canary",
+        branch = "main",
         build = function()
             vim.defer_fn(function()
                 vim.cmd("UpdateRemotePlugins")

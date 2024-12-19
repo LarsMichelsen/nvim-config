@@ -23,6 +23,8 @@ return {
                     "yamllint", -- linter
                     -- containers
                     "hadolint", -- linter
+                    -- language
+                    "harper-ls", -- linter
                 },
             })
 
@@ -101,8 +103,8 @@ return {
 
                 -- Mappings.
                 require("which-key").add({
-                    { "<C-k>", vim.diagnostic.goto_prev, desc = "Previous finding" },
-                    { "<C-j>", vim.diagnostic.goto_next, desc = "Next finding" },
+                    { "<C-k>", vim.diagnostic.goto_prev, desc = "Previous diagnostic finding" },
+                    { "<C-j>", vim.diagnostic.goto_next, desc = "Next diagnostic finding" },
 
                     -- Not used / supported by my lsp so far
                     -- vim.keymap.set('n', 'gD', vim.lsp.buf.declaration, bufopts)
@@ -218,8 +220,10 @@ return {
                         client.config.settings.pylsp.plugins.ruff.enabled = true
                         client.config.settings.pylsp.plugins.ruff.format_enabled = true
                     elseif string.find(path, "git/checkmk") ~= nil then
+                        client.config.settings.pylsp.plugins.pylint.enabled = false
+                        client.config.settings.pylsp.plugins.pylint_lint.enabled = false
                         client.config.settings.pylsp.plugins.pylsp_black.enabled = false
-                        client.config.settings.pylsp.plugins.ruff.enabled = false
+                        client.config.settings.pylsp.plugins.ruff.enabled = true
                         client.config.settings.pylsp.plugins.isort.enabled = false
                         client.config.settings.pylsp.plugins.yapf.enabled = false
                     elseif string.find(path, "git/checkmk%-2%.1%.0") ~= nil then
@@ -380,55 +384,90 @@ return {
             vim.lsp.handlers["textDocument/typeDefinition"] = location_handler
             vim.lsp.handlers["textDocument/implementation"] = location_handler
 
-            -- https://github.com/neovim/nvim-lspconfig/blob/master/doc/server_configurations.md#ltex
-            require("lspconfig").ltex.setup({
-                filetypes = {
-                    -- defaults
-                    "bib",
-                    "gitcommit",
-                    "markdown",
-                    "org",
-                    "plaintex",
-                    "rst",
-                    "rnoweb",
-                    "tex",
-                    "pandoc",
-                    "quarto",
-                    "rmd",
-                    -- added by me
-                    --"python",
-                },
-                capabilities = capabilities,
-                on_attach = function(client, bufnr)
-                    on_attach(client, bufnr)
-                    require("ltex_extra").setup({
-                        -- Where to store dictionaries?
-                        path = vim.fn.expand("~") .. "/.local/share/nvim/ltex",
-                    })
-                end,
+            -- https://github.com/neovim/nvim-lspconfig/blob/master/doc/configs.md
+            -- https://github.com/Automattic/harper/blob/master/harper-ls/README.md#configuration
+            -- https://writewithharper.com/
+            require("lspconfig").harper_ls.setup({
                 settings = {
-                    -- https://valentjn.github.io/ltex/settings.html
-                    ltex = {
-                        enabled = {
-                            -- defaults
-                            "bib",
-                            "gitcommit",
-                            "markdown",
-                            "org",
-                            "plaintex",
-                            "rst",
-                            "rnoweb",
-                            "tex",
-                            "pandoc",
-                            "quarto",
-                            "rmd",
-                            -- added by me
-                            -- disabled for now. Is a bit too annoying. Needs tuning.
-                            -- "python",
+                    ["harper-ls"] = {
+                        userDictPath = "~/.harper/dict.txt",
+                        fileDictPath = "~/.harper/file_dict",
+                        diagnosticSeverity = "error",
+                        codeActions = {
+                            forceStable = true,
                         },
+                        -- linters = {
+                        --     spell_check = true,
+                        --     spelled_numbers = false,
+                        --     an_a = true,
+                        --     sentence_capitalization = true,
+                        --     unclosed_quotes = true,
+                        --     wrong_quotes = false,
+                        --     long_sentences = true,
+                        --     repeated_words = true,
+                        --     spaces = true,
+                        --     matcher = true,
+                        --     correct_number_suffix = true,
+                        --     number_suffix_capitalization = true,
+                        --     multiple_sequential_pronouns = true,
+                        --     linking_verbs = false,
+                        --     avoid_curses = true,
+                        --     terminating_conjunctions = true,
+                        -- },
                     },
                 },
+                on_attach = on_attach,
             })
+
+            -- https://github.com/neovim/nvim-lspconfig/blob/master/doc/configs.md
+            -- require("lspconfig").ltex.setup({
+            --     filetypes = {
+            --         -- defaults
+            --         "bib",
+            --         "gitcommit",
+            --         "markdown",
+            --         "org",
+            --         "plaintex",
+            --         "rst",
+            --         "rnoweb",
+            --         "tex",
+            --         "pandoc",
+            --         "quarto",
+            --         "rmd",
+            --         -- added by me
+            --         --"python",
+            --     },
+            --     capabilities = capabilities,
+            --     on_attach = function(client, bufnr)
+            --         on_attach(client, bufnr)
+            --         require("ltex_extra").setup({
+            --             -- Where to store dictionaries?
+            --             path = vim.fn.expand("~") .. "/.local/share/nvim/ltex",
+            --         })
+            --     end,
+            --     settings = {
+            --         -- https://valentjn.github.io/ltex/settings.html
+            --         ltex = {
+            --             enabled = {
+            --                 -- defaults
+            --                 "bib",
+            --                 "gitcommit",
+            --                 "markdown",
+            --                 "org",
+            --                 "plaintex",
+            --                 "rst",
+            --                 "rnoweb",
+            --                 "tex",
+            --                 "pandoc",
+            --                 "quarto",
+            --                 "rmd",
+            --                 -- added by me
+            --                 -- disabled for now. Is a bit too annoying. Needs tuning.
+            --                 -- "python",
+            --             },
+            --         },
+            --     },
+            -- })
         end,
     },
     {
@@ -497,7 +536,7 @@ return {
         event = { "BufWritePre" },
         cmd = { "ConformInfo" },
         opts = {
-            log_level = vim.log.levels.DEBUG,
+            --log_level = vim.log.levels.DEBUG,
             formatters_by_ft = {
                 python = { "ruff_fix", "ruff_format", "ruff_organize_imports" },
                 lua = { "stylua" },
