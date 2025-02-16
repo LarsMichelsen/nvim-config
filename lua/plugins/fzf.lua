@@ -20,10 +20,10 @@ return {
                     },
                 },
                 grep = {
-                    rg_opts = '--smart-case -g "!{.git,node_modules,.mypy_cache,swagger-ui-3,tests/qa-test-data,third_party}/*" -g !redoc.standalone.js -g "!*.lock" --type-not svg --type-not po',
+                    rg_opts = '--line-number --column --smart-case -g "!{.git,node_modules,.mypy_cache,swagger-ui-3,tests/qa-test-data,third_party}/*" -g !redoc.standalone.js -g "!*.lock" --type-not svg --type-not po',
                 },
                 files = {
-                    rg_opts = '--smart-case -g "!{.git,node_modules,.mypy_cache,swagger-ui-3,tests/qa-test-data}/*" -g "!third_party/*" -g !redoc.standalone.js -g "!*.lock" --type-not svg --type-not po',
+                    rg_opts = '--line-number --column --smart-case -g "!{.git,node_modules,.mypy_cache,swagger-ui-3,tests/qa-test-data}/*" -g "!third_party/*" -g !redoc.standalone.js -g "!*.lock" --type-not svg --type-not po',
                 },
                 oldfiles = {
                     include_current_session = true,
