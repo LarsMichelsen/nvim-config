@@ -23,8 +23,6 @@ return {
                     "yamllint", -- linter
                     -- containers
                     "hadolint", -- linter
-                    -- language
-                    "harper-ls", -- linter
                 },
             })
 
@@ -197,9 +195,9 @@ return {
                             isort = { enabled = false },
                             pylsp_black = { enabled = false },
                             pylsp_mypy = { enabled = true },
-                            pylint = { enabled = true },
-                            pylint_lint = { enabled = true },
-                            ruff = { enabled = false },
+                            pylint = { enabled = false },
+                            pylint_lint = { enabled = false },
+                            ruff = { enabled = true },
                             mccabe = { enabled = false },
                             rope_autoimport = { enabled = false },
                             jedi = { enabled = false },
@@ -227,6 +225,9 @@ return {
                         client.config.settings.pylsp.plugins.isort.enabled = false
                         client.config.settings.pylsp.plugins.yapf.enabled = false
                     elseif string.find(path, "git/checkmk%-2%.1%.0") ~= nil then
+                        client.config.settings.pylsp.plugins.pylint.enabled = true
+                        client.config.settings.pylsp.plugins.pylint_lint.enabled = true
+                        client.config.settings.pylsp.plugins.ruff.enabled = false
                         -- client.config.settings.pylsp.plugins.pylint_lint.args = {'-j', '0', '--rcfile', '/home/lm/git/checkmk-2.1.0/.pylintrc'}
                         -- client.config.settings.pylsp.plugins.isort.executable = path + '/scripts/run-isort'
                         client.config.settings.pylsp.plugins.pylsp_black.enabled = false
@@ -235,9 +236,15 @@ return {
                         string.find(path, "git/checkmk%-2%.0%.0") ~= nil
                         or string.find(path, "git/checkmk%-1%.") ~= nil
                     then
+                        client.config.settings.pylsp.plugins.pylint.enabled = true
+                        client.config.settings.pylsp.plugins.pylint_lint.enabled = true
+                        client.config.settings.pylsp.plugins.ruff.enabled = false
                         client.config.settings.pylsp.plugins.yapf.enabled = true
                         client.config.settings.pylsp.plugins.pylsp_black.enabled = false
                     elseif string.find(path, "git/cma") ~= nil then
+                        client.config.settings.pylsp.plugins.pylint.enabled = true
+                        client.config.settings.pylsp.plugins.pylint_lint.enabled = true
+                        client.config.settings.pylsp.plugins.ruff.enabled = false
                         client.config.settings.pylsp.plugins.jedi.extra_paths = {
                             "/home/lm/git/cma/packages/cma",
                             "/home/lm/git/cma/packages/cmabackup",
@@ -385,149 +392,59 @@ return {
             vim.lsp.handlers["textDocument/implementation"] = location_handler
 
             -- https://github.com/neovim/nvim-lspconfig/blob/master/doc/configs.md
-            -- https://github.com/Automattic/harper/blob/master/harper-ls/README.md#configuration
-            -- https://writewithharper.com/
-            require("lspconfig").harper_ls.setup({
+            require("lspconfig").ltex.setup({
+                filetypes = {
+                    -- defaults
+                    "bib",
+                    "gitcommit",
+                    "markdown",
+                    "org",
+                    "plaintex",
+                    "rst",
+                    "rnoweb",
+                    "tex",
+                    "pandoc",
+                    "quarto",
+                    "rmd",
+                    -- added by me
+                    --"python",
+                },
+                capabilities = capabilities,
+                on_attach = function(client, bufnr)
+                    on_attach(client, bufnr)
+                    require("ltex_extra").setup({
+                        -- Where to store dictionaries?
+                        path = vim.fn.expand("~") .. "/.local/share/nvim/ltex",
+                    })
+                end,
                 settings = {
-                    ["harper-ls"] = {
-                        userDictPath = "~/.harper/dict.txt",
-                        fileDictPath = "~/.harper/file_dict",
-                        diagnosticSeverity = "error",
-                        codeActions = {
-                            forceStable = true,
+                    -- https://valentjn.github.io/ltex/settings.html
+                    ltex = {
+                        enabled = {
+                            -- defaults
+                            "bib",
+                            "gitcommit",
+                            "markdown",
+                            "org",
+                            "plaintex",
+                            "rst",
+                            "rnoweb",
+                            "tex",
+                            "pandoc",
+                            "quarto",
+                            "rmd",
+                            -- added by me
+                            -- disabled for now. Is a bit too annoying. Needs tuning.
+                            -- "python",
                         },
-                        -- linters = {
-                        --     spell_check = true,
-                        --     spelled_numbers = false,
-                        --     an_a = true,
-                        --     sentence_capitalization = true,
-                        --     unclosed_quotes = true,
-                        --     wrong_quotes = false,
-                        --     long_sentences = true,
-                        --     repeated_words = true,
-                        --     spaces = true,
-                        --     matcher = true,
-                        --     correct_number_suffix = true,
-                        --     number_suffix_capitalization = true,
-                        --     multiple_sequential_pronouns = true,
-                        --     linking_verbs = false,
-                        --     avoid_curses = true,
-                        --     terminating_conjunctions = true,
-                        -- },
                     },
                 },
-                on_attach = on_attach,
             })
-
-            -- https://github.com/neovim/nvim-lspconfig/blob/master/doc/configs.md
-            -- require("lspconfig").ltex.setup({
-            --     filetypes = {
-            --         -- defaults
-            --         "bib",
-            --         "gitcommit",
-            --         "markdown",
-            --         "org",
-            --         "plaintex",
-            --         "rst",
-            --         "rnoweb",
-            --         "tex",
-            --         "pandoc",
-            --         "quarto",
-            --         "rmd",
-            --         -- added by me
-            --         --"python",
-            --     },
-            --     capabilities = capabilities,
-            --     on_attach = function(client, bufnr)
-            --         on_attach(client, bufnr)
-            --         require("ltex_extra").setup({
-            --             -- Where to store dictionaries?
-            --             path = vim.fn.expand("~") .. "/.local/share/nvim/ltex",
-            --         })
-            --     end,
-            --     settings = {
-            --         -- https://valentjn.github.io/ltex/settings.html
-            --         ltex = {
-            --             enabled = {
-            --                 -- defaults
-            --                 "bib",
-            --                 "gitcommit",
-            --                 "markdown",
-            --                 "org",
-            --                 "plaintex",
-            --                 "rst",
-            --                 "rnoweb",
-            --                 "tex",
-            --                 "pandoc",
-            --                 "quarto",
-            --                 "rmd",
-            --                 -- added by me
-            --                 -- disabled for now. Is a bit too annoying. Needs tuning.
-            --                 -- "python",
-            --             },
-            --         },
-            --     },
-            -- })
         end,
     },
     {
         "neovim/nvim-lspconfig",
     },
-    -- replaced with fidget
-    -- {
-    --     -- https://github.com/linrongbin16/lsp-progress.nvim
-    --     "linrongbin16/lsp-progress.nvim",
-    --     config = function()
-    --         require("lsp-progress").setup({
-    --             -- Show all active client names
-    --             -- https://github.com/linrongbin16/lsp-progress.nvim/wiki/Advanced-Configuration
-    --             client_format = function(client_name, spinner, series_messages)
-    --                 if #series_messages == 0 then
-    --                     return nil
-    --                 end
-    --                 return {
-    --                     name = client_name,
-    --                     body = spinner .. " " .. table.concat(series_messages, ", "),
-    --                 }
-    --             end,
-    --             format = function(client_messages)
-    --                 --- @param name string
-    --                 --- @param msg string?
-    --                 --- @return string
-    --                 local function stringify(name, msg)
-    --                     return msg and string.format("%s %s", name, msg) or name
-    --                 end
-
-    --                 local sign = "" -- nf-fa-gear \uf013
-    --                 local lsp_clients = vim.lsp.get_active_clients()
-    --                 local messages_map = {}
-    --                 for _, climsg in ipairs(client_messages) do
-    --                     messages_map[climsg.name] = climsg.body
-    --                 end
-
-    --                 if #lsp_clients > 0 then
-    --                     table.sort(lsp_clients, function(a, b)
-    --                         return a.name < b.name
-    --                     end)
-    --                     local builder = {}
-    --                     for _, cli in ipairs(lsp_clients) do
-    --                         if type(cli) == "table" and type(cli.name) == "string" and string.len(cli.name) > 0 then
-    --                             if messages_map[cli.name] then
-    --                                 table.insert(builder, stringify(cli.name, messages_map[cli.name]))
-    --                             else
-    --                                 table.insert(builder, stringify(cli.name))
-    --                             end
-    --                         end
-    --                     end
-    --                     if #builder > 0 then
-    --                         return sign .. " " .. table.concat(builder, ", ")
-    --                     end
-    --                 end
-    --                 return ""
-    --             end,
-    --         })
-    --     end,
-    -- },
     {
         -- https://github.com/stevearc/conform.nvim
         -- https://github.com/stevearc/conform.nvim/blob/master/doc/recipes.md
