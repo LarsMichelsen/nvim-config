@@ -15,7 +15,12 @@ vim.opt.rtp:prepend(lazypath)
 -- Set before loading lazy to ensure keybinds are correct
 vim.g.mapleader = ","
 
-require("lazy").setup("plugins")
+--require("lazy").setup("plugins")
+require("lazy").setup("plugins", {
+    change_detection = {
+        notify = false,
+    },
+})
 
 require("config/options")
 require("config/autocmds")
