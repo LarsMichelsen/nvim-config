@@ -14,6 +14,8 @@ return {
         config = function()
             require("mason-tool-installer").setup({
                 ensure_installed = {
+                    -- python
+                    --"basedpyright", -- typing
                     -- lua
                     "stylua", -- formatter
                     -- shell
@@ -57,6 +59,7 @@ return {
                 -- python
                 "pylsp",
                 "ruff",
+                --"basedpyright",
                 -- lua
                 "lua_ls",
                 -- shell
@@ -177,6 +180,33 @@ return {
                 vim.lsp.protocol.make_client_capabilities(),
                 require("cmp_nvim_lsp").default_capabilities()
             )
+
+            --require("lspconfig").basedpyright.setup({
+            --    capabilities = capabilities,
+            --    on_attach = on_attach,
+            --    single_file_support = true,
+            --    settings = {
+            --        basedpyright = {
+            --            analysis = {
+            --                autoSearchPaths = true,
+            --                useLibraryCodeForTypes = true,
+            --                diagnosticMode = "openFilesOnly",
+            --                exclude = {
+            --                    "bazel-bin",
+            --                    "bazel-checkmk-*",
+            --                    "bazel-checkmk",
+            --                    "bazel-out",
+            --                    "**/.cache",
+            --                    "**/.venv",
+            --                    "**/node_modules",
+            --                    "**/.cargo",
+            --                    "**/.mypy_cache",
+            --                    ".git",
+            --                },
+            --            },
+            --        },
+            --    },
+            --})
 
             require("lspconfig").pylsp.setup({
                 -- For debugging: tail -f /home/lm/.local/state/nvim/pylsp.log
