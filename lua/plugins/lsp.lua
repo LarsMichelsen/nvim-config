@@ -194,7 +194,11 @@ return {
                             pycodestyle = { enabled = false },
                             isort = { enabled = false },
                             pylsp_black = { enabled = false },
-                            pylsp_mypy = { enabled = true },
+                            pylsp_mypy = {
+                                enabled = true,
+                                report_progress = true,
+                                live_mode = false,
+                            },
                             pylint = { enabled = false },
                             pylint_lint = { enabled = false },
                             ruff = { enabled = true },
