@@ -83,9 +83,6 @@ return {
             --
             -- TODO:
             --   https://github.com/neovim/nvim-lspconfig/wiki/UI-Customization
-            --
-            -- Install dependencies:
-            --   pip install python-lsp-server python-lsp-server[all] pylsp-mypy pyls-isort python-lsp-black
 
             -- Key mappings
             -- Based on: https://github.com/neovim/nvim-lspconfig#suggested-configuration
@@ -210,7 +207,12 @@ return {
 
             require("lspconfig").pylsp.setup({
                 -- For debugging: tail -f /home/lm/.local/state/nvim/pylsp.log
-                cmd = { "pylsp", "-v", "--log-file", "/home/lm/.local/state/nvim/pylsp.log" },
+                cmd = {
+                    vim.fn.stdpath("data") .. "/mason/bin/pylsp",
+                    "-v",
+                    "--log-file",
+                    "/home/lm/.local/state/nvim/pylsp.log",
+                },
                 -- format = { timeout_ms = 3000 },
                 capabilities = capabilities,
                 settings = {
