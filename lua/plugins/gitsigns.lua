@@ -53,7 +53,7 @@ return {
         },
     },
     opts = {
-        word_diff = true,
+        word_diff = false,
         attach_to_untracked = true,
         on_attach = function(bufnr)
             local gitsigns = require("gitsigns")
