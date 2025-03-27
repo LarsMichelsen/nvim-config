@@ -8,11 +8,11 @@ return {
         config = function()
             require("copilot").setup({
                 panel = {
-                    enabled = true,
+                    enabled = false, -- Use copilot-cmp
                     auto_refresh = true,
                 },
                 suggestion = {
-                    enabled = true,
+                    enabled = false, -- Use copilot-cmp
                     auto_trigger = true,
                     -- done by nvim-cmp
                     accept = false, -- disable built-in keymapping
@@ -67,25 +67,25 @@ return {
                 end,
             })
 
-            -- hide copilot suggestions when cmp menu is open
-            -- to prevent odd behavior/garbled up suggestions
-            local cmp_status_ok, cmp = pcall(require, "cmp")
-            if cmp_status_ok then
-                cmp.event:on("menu_opened", function()
-                    vim.b.copilot_suggestion_hidden = true
-                end)
+            -- -- hide copilot suggestions when cmp menu is open
+            -- -- to prevent odd behavior/garbled up suggestions
+            -- local cmp_status_ok, cmp = pcall(require, "cmp")
+            -- if cmp_status_ok then
+            --     cmp.event:on("menu_opened", function()
+            --         vim.b.copilot_suggestion_hidden = true
+            --     end)
 
-                cmp.event:on("menu_closed", function()
-                    vim.b.copilot_suggestion_hidden = false
-                end)
-            end
+            --     cmp.event:on("menu_closed", function()
+            --         vim.b.copilot_suggestion_hidden = false
+            --     end)
+            -- end
 
-            -- Clean virtual text when leaving insert mode through <Ctrl-c>
-            -- Maybe I should just stop using this key combination ;-). It's a bit annoying
-            vim.keymap.set("i", "<C-c>", function()
-                require("copilot/suggestion").dismiss()
-                vim.cmd("stopinsert")
-            end, { noremap = false, silent = true })
+            -- -- Clean virtual text when leaving insert mode through <Ctrl-c>
+            -- -- Maybe I should just stop using this key combination ;-). It's a bit annoying
+            -- vim.keymap.set("i", "<C-c>", function()
+            --     require("copilot/suggestion").dismiss()
+            --     vim.cmd("stopinsert")
+            -- end, { noremap = false, silent = true })
 
             -- Copilot is attached as Lsp. To investigate communication with the server,
             -- set log level to DEBUG and have a look at the lsp log, e.g. with:
@@ -96,10 +96,12 @@ return {
     {
         "zbirenbaum/copilot-cmp",
         dependencies = {
-            "hrsh7th/nvim-cmp",
+            "copilot.lua",
+            "lspkind.nvim",
         },
-        config = function()
-            require("copilot_cmp").setup()
+        config = true,
+        init = function()
+            vim.api.nvim_set_hl(0, "CmpItemKindCopilot", { fg = "#6CC644" })
         end,
     },
     {

@@ -17,5 +17,10 @@ return {
             },
         })
         vim.cmd([[ colorscheme NeoSolarized ]])
+
+        vim.api.nvim_set_hl(0, "DiffAdd", { bg = "#004000" })
+        vim.api.nvim_set_hl(0, "DiffChange", { bg = "#084245" })
+        vim.api.nvim_set_hl(0, "DiffText", { bg = "#43636e" })
+        vim.api.nvim_set_hl(0, "DiffDelete", { bg = "#002b36", fg = "#2d393d" })
     end,
 }

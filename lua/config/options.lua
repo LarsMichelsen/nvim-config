@@ -69,6 +69,10 @@ local options = {
 
     syntax = "on",
     termguicolors = true,
+
+    fillchars = vim.opt["fillchars"] + { diff = "_" },
+    -- diffopt = "internal,filler,closeoff,indent-heuristic,linematch:60,algorithm:histogram",
+    diffopt = "internal,filler,closeoff,indent-heuristic,linematch:60,algorithm:patience",
 }
 
 for k, v in pairs(options) do
