@@ -111,31 +111,4 @@ return {
             })
         end,
     },
-    -- Added for signature under cursor in lualine
-    {
-        "ray-x/lsp_signature.nvim",
-        event = "VeryLazy",
-        opts = {
-            hint_enable = false,
-            wrap = true,
-            -- floating_window_off_x = function()
-            --     -- move to the right
-            --     local wincol = vim.fn.wincol()
-            --     local winwidth = vim.fn.winwidth(0)
-
-            --     return winwidth
-            -- end,
-            -- floating_window_off_y = function()
-            --     local linenr = vim.api.nvim_win_get_cursor(0)[1] -- buf line number
-            --     -- move to the bottom
-            --     local winline = vim.fn.winline() -- line number in the window
-            --     local winheight = vim.fn.winheight(0)
-
-            --     return winheight - winline + 1
-            -- end,
-        },
-        config = function(_, opts)
-            require("lsp_signature").setup(opts)
-        end,
-    },
 }
