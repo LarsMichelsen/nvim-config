@@ -135,25 +135,6 @@ return {
                     --["<leader>f"] = { vim.lsp.buf.formatting, "Format" },
                 }, { buffer = bufnr })
 
-                -- Run formatting automatically on save
-                -- local augroup = vim.api.nvim_create_augroup("LspFormatting", { clear = true })
-                -- vim.api.nvim_create_autocmd("BufWritePre", {
-                --     pattern = "*",
-                --     group = augroup,
-                --     callback = function()
-                --         vim.lsp.buf.format({
-                --             timeout_ms = 2000,
-                --             filter = function(clients)
-                --                 return vim.tbl_filter(function(client)
-                --                     return pcall(function(_client)
-                --                         return _client.config.settings.autoFixOnSave or false
-                --                     end, client) or false
-                --                 end, clients)
-                --             end,
-                --         })
-                --     end,
-                -- })
-
                 -- open diagnostic on cursor position
                 vim.api.nvim_create_autocmd("CursorHold", {
                     buffer = bufnr,
@@ -208,13 +189,14 @@ return {
             require("lspconfig").pylsp.setup({
                 -- For debugging: tail -f /home/lm/.local/state/nvim/pylsp.log
                 cmd = {
+                    -- Needs ":PylspInstall pylsp-mypy python-lsp-ruff" to make the plugins
+                    -- available in the mason provided venv.
                     vim.fn.stdpath("data") .. "/mason/bin/pylsp",
+                    --"pylsp",
                     "-v",
                     "--log-file",
                     "/home/lm/.local/state/nvim/pylsp.log",
                 },
-                -- format = { timeout_ms = 3000 },
-                capabilities = capabilities,
                 settings = {
                     pylsp = {
                         plugins = {
