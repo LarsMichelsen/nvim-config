@@ -51,8 +51,10 @@ return {
         "williamboman/mason-lspconfig.nvim",
         event = { "BufReadPre", "BufNewFile" },
         dependencies = {
-            "hrsh7th/cmp-nvim-lsp",
+            --"hrsh7th/cmp-nvim-lsp",
             "williamboman/mason.nvim",
+            -- https://cmp.saghen.dev/installation.html
+            "saghen/blink.cmp",
         },
         opts = function(_, opts)
             opts.ensure_installed = {
@@ -152,12 +154,11 @@ return {
                 })
             end
 
-            -- Set up cmp with lspconfig
-            local capabilities = vim.tbl_deep_extend(
-                "force",
-                vim.lsp.protocol.make_client_capabilities(),
-                require("cmp_nvim_lsp").default_capabilities()
-            )
+            local lspconfig = require("lspconfig")
+
+            -- Extend capabilities for blink LSP integration (See
+            -- https://cmp.saghen.dev/installation.html)
+            local capabilities = require("blink.cmp").get_lsp_capabilities()
 
             --require("lspconfig").basedpyright.setup({
             --    capabilities = capabilities,
@@ -186,7 +187,7 @@ return {
             --    },
             --})
 
-            require("lspconfig").pylsp.setup({
+            lspconfig.pylsp.setup({
                 -- For debugging: tail -f /home/lm/.local/state/nvim/pylsp.log
                 cmd = {
                     -- Needs ":PylspInstall pylsp-mypy python-lsp-ruff" to make the plugins
@@ -197,6 +198,7 @@ return {
                     "--log-file",
                     "/home/lm/.local/state/nvim/pylsp.log",
                 },
+                capabilities = capabilities,
                 settings = {
                     pylsp = {
                         plugins = {
@@ -347,6 +349,7 @@ return {
             --   settings = {
             --
             --   },
+            --   capabilities = capabilities,
             --   on_attach = on_attach
             -- }
 

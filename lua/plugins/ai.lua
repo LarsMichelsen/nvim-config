@@ -8,11 +8,11 @@ return {
         config = function()
             require("copilot").setup({
                 panel = {
-                    enabled = false, -- Use copilot-cmp
+                    enabled = false, -- Use blink
                     auto_refresh = true,
                 },
                 suggestion = {
-                    enabled = false, -- Use copilot-cmp
+                    enabled = false, -- Use blink
                     auto_trigger = true,
                     -- done by nvim-cmp
                     accept = false, -- disable built-in keymapping
