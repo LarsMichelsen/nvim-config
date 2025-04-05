@@ -28,6 +28,7 @@ return {
                     cvs = false,
                     ["."] = false,
                 },
+                copilot_model = "gpt-4o-copilot",
                 should_attach = function(_, bufname)
                     local cwd = vim.fn.getcwd() .. "/"
 
