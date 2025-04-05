@@ -5,7 +5,8 @@ return {
         dependencies = {
             "rafamadriz/friendly-snippets",
             "ribru17/blink-cmp-spell",
-            "fang2hou/blink-copilot",
+            --"fang2hou/blink-copilot",
+            "giuxtaposition/blink-cmp-copilot",
         },
         version = "v1.*",
         -- AND/OR build from source
@@ -26,7 +27,7 @@ return {
             -- C-k: Toggle signature help (if signature.enabled = true)
             --
             -- See :h blink-cmp-config-keymap for defining your own keymap
-            keymap = { preset = "default" },
+            keymap = { preset = "enter" },
 
             appearance = {
                 -- 'mono' (default) for 'Nerd Font Mono' or 'normal' for 'Nerd Font'
@@ -63,16 +64,14 @@ return {
             -- Default list of enabled providers defined so that you can extend it
             -- elsewhere in your config, without redefining it, due to `opts_extend`
             sources = {
-                default = { "lsp", "copilot", "path", "snippets", "buffer", "spell" },
+                default = { "copilot", "lsp", "path", "snippets", "buffer", "spell" },
                 providers = {
                     copilot = {
                         name = "copilot",
-                        module = "blink-copilot",
+                        --module = "blink-copilot",
+                        module = "blink-cmp-copilot",
                         score_offset = 100,
                         async = true,
-                        opts = {
-                            max_completions = 3,
-                        },
                     },
                     spell = {
                         name = "Spell",
@@ -94,15 +93,6 @@ return {
                                 return in_spell_capture
                             end,
                         },
-                    },
-                    cmdline = {
-                        min_keyword_length = function(ctx)
-                            -- when typing a command, only show when the keyword is 3 characters or longer
-                            if ctx.mode == "cmdline" and string.find(ctx.line, " ") == nil then
-                                return 3
-                            end
-                            return 0
-                        end,
                     },
                 },
             },
@@ -131,22 +121,8 @@ return {
             -- Experimental signature help support
             signature = { enabled = true },
 
-            -- Improve the cmdline (e.g. ":tabnew ...")
-            -- https://cmp.saghen.dev/modes/cmdline.html
             cmdline = {
-                keymap = {
-                    ["<Tab>"] = { "accept" },
-                    ["<CR>"] = { "accept_and_enter", "fallback" },
-                },
-                completion = {
-                    menu = {
-                        auto_show = function(ctx)
-                            return vim.fn.getcmdtype() == ":"
-                            -- enable for inputs as well, with:
-                            -- or vim.fn.getcmdtype() == '@'
-                        end,
-                    },
-                },
+                enabled = false,
             },
         },
         opts_extend = { "sources.default" },
