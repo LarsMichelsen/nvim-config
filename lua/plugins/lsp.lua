@@ -101,17 +101,78 @@ return {
                 -- Enable completion triggered by <c-x><c-o>
                 vim.api.nvim_buf_set_option(bufnr, "omnifunc", "v:lua.vim.lsp.omnifunc")
 
+                --
+                -- Open definition in new tab
+                --
+                --local function on_list_handler(options)
+                --    -- Sample structure
+                --    -- options = { ["context"] = { ["method"] = textDocument/definition,["bufnr"] = 1,} ,["title"] = LSP locations,["items"] = { [1] = { ["lnum"] = 93,["filename"] = /home/lm/git/checkmk/cmk/gui/config.py,["user_data"] = { ["range"] = { ["end"] = { ["line"] = 92,["character"] = 13,} ,["start"] = { ["line"] = 92,["character"] = 0,} ,} ,["uri"] = file:///home/lm/git/checkmk/cmk/gui/config.py,} ,["text"] = active_config = request_local_attr("config", Config),["col"] = 1,["end_col"] = 14,["end_lnum"] = 93,} ,} ,}
+                --    local api = vim.api
+                --    local log = require("vim.lsp.log")
+
+                --    local result = options.items
+                --    if result == nil or vim.tbl_isempty(result) then
+                --        local _ = log.info() and log.info("No location found")
+                --        return nil
+                --    end
+
+                --    -- create a new tab and save bufnr
+                --    vim.cmd("tabnew")
+                --    local buf = api.nvim_get_current_buf()
+
+                --    if #result == 1 then
+                --        --util.jump_to_location(result.items[1], client.offset_encoding, true)
+                --        local item = result[1]
+                --        local win = api.nvim_get_current_win()
+                --        local b = item.bufnr or vim.fn.bufadd(item.filename)
+
+                --        -- Save position in jumplist
+                --        vim.cmd("normal! m'")
+                --        -- Push a new item into tagstack
+                --        local tagstack = { { tagname = tagname, from = from } }
+                --        vim.fn.settagstack(vim.fn.win_getid(win), { items = tagstack }, "t")
+
+                --        vim.bo[b].buflisted = true
+                --        local w = vim.fn.win_findbuf(b)[1] or win
+                --        api.nvim_win_set_buf(w, b)
+                --        api.nvim_win_set_cursor(w, { item.lnum, item.col - 1 })
+                --        vim._with({ win = w }, function()
+                --            -- Open folds under the cursor
+                --            vim.cmd("normal! zv")
+                --        end)
+                --    else
+                --        vim.fn.setqflist({}, " ", { title = title, items = items })
+                --        api.nvim_command("botright copen")
+                --    end
+
+                --    -- remove the empty buffer created with tabnew
+                --    api.nvim_command(buf .. "bd")
+                --end
+
                 -- Mappings.
                 require("which-key").add({
                     { "<C-k>", vim.diagnostic.goto_prev, desc = "Previous diagnostic finding" },
                     { "<C-j>", vim.diagnostic.goto_next, desc = "Next diagnostic finding" },
 
                     -- Not used / supported by my lsp so far
-                    -- vim.keymap.set('n', 'gD', vim.lsp.buf.declaration, bufopts)
                     -- vim.keymap.set('n', 'gi', vim.lsp.buf.implementation, bufopts)
                     -- vim.keymap.set('n', '<space>D', vim.lsp.buf.type_definition, bufopts)
 
-                    { "<leader>d", vim.lsp.buf.definition, desc = "Go to definition" },
+                    {
+                        "<leader>d",
+                        vim.lsp.buf.definition,
+                        desc = "Go to definition",
+                    },
+                    -- Open definition in new tab
+                    --{
+                    --    "<leader>d",
+                    --    function()
+                    --        require("vim.lsp.log").warn("====================== Y")
+                    --        vim.lsp.buf.definition({ on_list = on_list_handler })
+                    --    end,
+                    --    --vim.lsp.buf.definition,
+                    --    desc = "Go to definition",
+                    --},
                     { "<leader>wd", vim.lsp.buf.hover, desc = "Show documentation" },
                     { "<leader>wa", vim.lsp.buf.code_action, desc = "Code action" },
 
@@ -132,9 +193,6 @@ return {
                     --end, bufopts)
 
                     { "<leader>wc", vim.lsp.buf.references, desc = "Find references" },
-
-                    -- No need to trigger manually - doing format on save (see below)
-                    --["<leader>f"] = { vim.lsp.buf.formatting, "Format" },
                 }, { buffer = bufnr })
 
                 -- open diagnostic on cursor position
@@ -158,7 +216,12 @@ return {
 
             -- Extend capabilities for blink LSP integration (See
             -- https://cmp.saghen.dev/installation.html)
-            local capabilities = require("blink.cmp").get_lsp_capabilities()
+            local capabilities = vim.tbl_deep_extend(
+                "force",
+                vim.lsp.protocol.make_client_capabilities(),
+                --require("cmp_nvim_lsp").default_capabilities()
+                require("blink.cmp").get_lsp_capabilities()
+            )
 
             --require("lspconfig").basedpyright.setup({
             --    capabilities = capabilities,
@@ -198,7 +261,6 @@ return {
                     "--log-file",
                     "/home/lm/.local/state/nvim/pylsp.log",
                 },
-                capabilities = capabilities,
                 settings = {
                     pylsp = {
                         plugins = {
@@ -342,75 +404,12 @@ return {
                 vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = hl })
             end
 
-            -- Python 3.11 currently not supported
-            -- https://github.com/pappasam/jedi-language-server
-            -- https://github.com/neovim/nvim-lspconfig/blob/master/doc/server_configurations.md#jedi_language_server
-            -- require('lspconfig').jedi_language_server.setup{
-            --   settings = {
-            --
-            --   },
-            --   capabilities = capabilities,
-            --   on_attach = on_attach
-            -- }
-
             -- Check which capabilities a LSP has:
             -- :lua =vim.lsp.get_active_clients()[1].server_capabilities
 
             -- Enable this, then see :LspLog
             -- or `tail -f /home/lm/.local/state/nvim/lsp.log`
             -- :lua vim.lsp.set_log_level("debug")
-
-            --
-            -- Open definition in new tab
-            --
-            local api = vim.api
-            local util = vim.lsp.util
-            local log = require("vim.lsp.log")
-
-            local function location_handler(_, result, ctx, config)
-                if result == nil or vim.tbl_isempty(result) then
-                    local _ = log.info() and log.info(ctx.method, "No location found")
-                    return nil
-                end
-                local client = vim.lsp.get_client_by_id(ctx.client_id)
-
-                config = config or { reuse_win = true }
-
-                -- textDocument/definition can return Location or Location[]
-                -- https://microsoft.github.io/language-server-protocol/specifications/specification-current/#textDocument_definition
-
-                -- create a new tab and save bufnr
-                api.nvim_command("tabnew")
-                local buf = api.nvim_get_current_buf()
-
-                if vim.tbl_islist(result) then
-                    local title = "LSP locations"
-                    local items = util.locations_to_items(result, client.offset_encoding)
-
-                    if config.on_list then
-                        assert(type(config.on_list) == "function", "on_list is not a function")
-                        config.on_list({ title = title, items = items })
-                    else
-                        if #result == 1 then
-                            util.jump_to_location(result[1], client.offset_encoding, config.reuse_win)
-                        else
-                            vim.fn.setqflist({}, " ", { title = title, items = items })
-                            api.nvim_command("botright copen")
-                        end
-                    end
-                else
-                    util.jump_to_location(result, client.offset_encoding, config.reuse_win)
-                    local buf = api.nvim_get_current_buf()
-                end
-
-                -- remove the empty buffer created with tabnew
-                api.nvim_command(buf .. "bd")
-            end
-
-            vim.lsp.handlers["textDocument/declaration"] = location_handler
-            vim.lsp.handlers["textDocument/definition"] = location_handler
-            vim.lsp.handlers["textDocument/typeDefinition"] = location_handler
-            vim.lsp.handlers["textDocument/implementation"] = location_handler
 
             -- https://github.com/neovim/nvim-lspconfig/blob/master/doc/configs.md
             require("lspconfig").ltex.setup({
@@ -489,7 +488,14 @@ return {
                 bzl = { "buildifier" },
             },
             -- Set up format-on-save
-            format_on_save = { timeout_ms = 500, lsp_fallback = false },
+            --format_on_save = { timeout_ms = 500, lsp_fallback = false },
+            format_on_save = function(bufnr)
+                -- Disable with a global or buffer-local variable
+                if vim.g.disable_autoformat or vim.b[bufnr].disable_autoformat then
+                    return
+                end
+                return { timeout_ms = 500, lsp_fallback = false }
+            end,
             -- Customize formatters
             formatters = {
                 stylua = {
