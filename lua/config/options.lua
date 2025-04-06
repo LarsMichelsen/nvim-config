@@ -86,3 +86,29 @@ vim.g.loaded_perl_provider = 0
 
 -- Set for obsidian.lua
 vim.opt.conceallevel = 1
+
+vim.diagnostic.config({
+    signs = true,
+    underline = true,
+    virtual_text = false,
+    virtual_lines = false,
+    update_in_insert = true,
+    severity_sort = true,
+    float = {
+        header = false,
+        border = "none",
+        focusable = true,
+    },
+    signs = {
+        text = {
+            [vim.diagnostic.severity.ERROR] = "✖ ",
+            [vim.diagnostic.severity.WARN] = " ",
+            [vim.diagnostic.severity.INFO] = "󰋼 ",
+            [vim.diagnostic.severity.HINT] = "󰌵 ",
+        },
+        numhl = {
+            [vim.diagnostic.severity.WARN] = "WarningMsg",
+            [vim.diagnostic.severity.ERROR] = "ErrorMsg",
+        },
+    },
+})

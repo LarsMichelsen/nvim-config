@@ -101,6 +101,20 @@ return {
                 -- Enable completion triggered by <c-x><c-o>
                 vim.api.nvim_buf_set_option(bufnr, "omnifunc", "v:lua.vim.lsp.omnifunc")
 
+                -- Clear diagnostics on save, and trigger LSP to compute them again
+                vim.api.nvim_create_autocmd({ "BufWritePre" }, {
+                    pattern = "*", -- This applies to all file types
+                    callback = function()
+                        local buf = vim.api.nvim_get_current_buf()
+                        -- Check if buffer is actually modified, and only if it is modified,
+                        local buf_modified = vim.api.nvim_buf_get_option(buf, "modified")
+                        if buf_modified then
+                            -- Reset diagnostics before save
+                            vim.diagnostic.reset()
+                        end
+                    end,
+                })
+
                 --
                 -- Open definition in new tab
                 --
@@ -194,22 +208,6 @@ return {
 
                     { "<leader>wc", vim.lsp.buf.references, desc = "Find references" },
                 }, { buffer = bufnr })
-
-                -- open diagnostic on cursor position
-                vim.api.nvim_create_autocmd("CursorHold", {
-                    buffer = bufnr,
-                    callback = function()
-                        local opts = {
-                            focusable = false,
-                            close_events = { "BufLeave", "CursorMoved", "InsertEnter", "FocusLost" },
-                            -- border = 'rounded',
-                            source = "always",
-                            prefix = " ",
-                            scope = "cursor",
-                        }
-                        vim.diagnostic.open_float(nil, opts)
-                    end,
-                })
             end
 
             local lspconfig = require("lspconfig")
@@ -390,19 +388,6 @@ return {
             --         return true
             --     end,
             -- })
-
-            -- I don't like displaying the "virtual text" on the code - too much visual clutter for me
-            vim.lsp.handlers["textDocument/publishDiagnostics"] =
-                vim.lsp.with(vim.lsp.diagnostic.on_publish_diagnostics, {
-                    virtual_text = false,
-                })
-
-            -- Change diagnostic symbols in the sign column (gutter)
-            local signs = { Error = "✖ ", Warn = "⚠ ", Hint = "H ", Info = "I " }
-            for type, icon in pairs(signs) do
-                local hl = "DiagnosticSign" .. type
-                vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = hl })
-            end
 
             -- Check which capabilities a LSP has:
             -- :lua =vim.lsp.get_active_clients()[1].server_capabilities
