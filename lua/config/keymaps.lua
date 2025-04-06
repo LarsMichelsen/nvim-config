@@ -39,3 +39,50 @@ wk.add({
     { "<leader>gb", ":Git blame<CR>", desc = "Git blame" },
     { "<leader>wr", ":%s/<C-r><C-w>//g<Left><Left>", desc = "Replace word under cursor" },
 })
+
+local current_min_severity = 1 -- Does not work for some reason: vim.diagnostic.severity.CRIT
+
+local function toggle_diagnostic_severity()
+    if current_min_severity == vim.diagnostic.severity.WARN then
+        current_min_severity = vim.diagnostic.severity.ERROR
+    else
+        current_min_severity = vim.diagnostic.severity.WARN
+    end
+
+    local current_config = vim.diagnostic.config()
+    current_config.signs = vim.tbl_deep_extend("force", current_config.signs or {}, {
+        severity = {
+            min = current_min_severity,
+            max = vim.diagnostic.severity.ERROR,
+        },
+    })
+    current_config.float = vim.tbl_deep_extend("force", current_config.float or {}, {
+        severity = {
+            min = current_min_severity,
+            max = vim.diagnostic.severity.ERROR,
+        },
+    })
+    vim.diagnostic.config(current_config)
+
+    print(
+        "Diagnostics severity set to: " .. (current_min_severity == vim.diagnostic.severity.ERROR and "ERROR" or "WARN")
+    )
+end
+
+wk.add({
+    { "<leader>tw", toggle_diagnostic_severity, desc = "Toggle diagnostic severity (WARN/ERROR)" },
+    {
+        "<C-k>",
+        function()
+            vim.diagnostic.goto_next({ severity = { current_min_severity, vim.diagnostic.severity.ERROR } })
+        end,
+        desc = "Previous diagnostic finding",
+    },
+    {
+        "<C-j>",
+        function()
+            vim.diagnostic.goto_prev({ severity = { current_min_severity, vim.diagnostic.severity.ERROR } })
+        end,
+        desc = "Next diagnostic finding",
+    },
+})

@@ -98,6 +98,9 @@ vim.diagnostic.config({
         header = false,
         border = "none",
         focusable = true,
+        severity = {
+            min = vim.diagnostic.severity.ERROR,
+        },
     },
     signs = {
         text = {
@@ -109,6 +112,9 @@ vim.diagnostic.config({
         numhl = {
             [vim.diagnostic.severity.WARN] = "WarningMsg",
             [vim.diagnostic.severity.ERROR] = "ErrorMsg",
+        },
+        severity = {
+            min = vim.diagnostic.severity.ERROR,
         },
     },
 })

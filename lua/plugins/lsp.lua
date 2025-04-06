@@ -165,9 +165,6 @@ return {
 
                 -- Mappings.
                 require("which-key").add({
-                    { "<C-k>", vim.diagnostic.goto_prev, desc = "Previous diagnostic finding" },
-                    { "<C-j>", vim.diagnostic.goto_next, desc = "Next diagnostic finding" },
-
                     -- Not used / supported by my lsp so far
                     -- vim.keymap.set('n', 'gi', vim.lsp.buf.implementation, bufopts)
                     -- vim.keymap.set('n', '<space>D', vim.lsp.buf.type_definition, bufopts)
