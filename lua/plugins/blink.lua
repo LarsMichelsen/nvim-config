@@ -5,8 +5,8 @@ return {
         dependencies = {
             "rafamadriz/friendly-snippets",
             "ribru17/blink-cmp-spell",
-            --"fang2hou/blink-copilot",
-            "giuxtaposition/blink-cmp-copilot",
+            "fang2hou/blink-copilot",
+            --"giuxtaposition/blink-cmp-copilot",
         },
         version = "v1.*",
         -- AND/OR build from source
@@ -36,8 +36,11 @@ return {
             },
 
             completion = {
+                -- Recommended to avoid unnecessary request
+                trigger = { prefetch_on_insert = false },
+
                 -- Don't select by default, auto insert on selection
-                list = { selection = { preselect = false, auto_insert = true } },
+                list = { selection = { preselect = false, auto_insert = false } },
 
                 menu = {
                     -- Don't automatically show the completion menu
@@ -64,12 +67,12 @@ return {
             -- Default list of enabled providers defined so that you can extend it
             -- elsewhere in your config, without redefining it, due to `opts_extend`
             sources = {
-                default = { "copilot", "lsp", "path", "snippets", "buffer", "spell" },
+                default = { "copilot", "lsp", "path", "snippets", "buffer" },
                 providers = {
                     copilot = {
                         name = "copilot",
-                        --module = "blink-copilot",
-                        module = "blink-cmp-copilot",
+                        module = "blink-copilot",
+                        --module = "blink-cmp-copilot",
                         score_offset = 100,
                         async = true,
                     },
