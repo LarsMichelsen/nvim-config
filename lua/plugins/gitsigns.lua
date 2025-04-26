@@ -44,13 +44,13 @@ return {
     event = "VeryLazy",
     dependencies = "nvim-lua/plenary.nvim",
     keys = {
-        {
-            "<leader>gb",
-            function()
-                require("gitsigns").blame()
-            end,
-            desc = "Blame",
-        },
+        -- {
+        --     "<leader>gt",
+        --     function()
+        --         require("gitsigns").blame()
+        --     end,
+        --     desc = "Blame",
+        -- },
     },
     opts = {
         word_diff = false,

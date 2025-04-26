@@ -18,7 +18,21 @@ return {
     --        vim.g.gitblame_display_virtual_text = 0
     --    end,
     --},
+    --{
+    --    "tpope/vim-fugitive",
+    --},
     {
-        "tpope/vim-fugitive",
+        "FabijanZulj/blame.nvim",
+        lazy = false,
+        keys = {
+            {
+                "<leader>gb",
+                ":BlameToggle<CR>",
+                desc = "Blame",
+            },
+        },
+        opts = {
+            date_format = "%Y-%m-%d",
+        },
     },
 }

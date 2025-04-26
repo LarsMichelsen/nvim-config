@@ -36,7 +36,6 @@ wk.add({
     { "<C-f>", ":%s/<C-r><C-w>//g<Left><Left>", desc = "Replace word under cursor" },
     { "<F10>", ':exec &bg=="light"? "set bg=dark" : "set bg=light"<CR>', desc = "Toggle light/dark mode" },
     { "<F12>", ":w<CR>:!/home/lm/git/zeug_cmk/bin/f12 %:p<CR>", desc = "Deploy" },
-    { "<leader>gb", ":Git blame<CR>", desc = "Git blame" },
     { "<leader>wr", ":%s/<C-r><C-w>//g<Left><Left>", desc = "Replace word under cursor" },
 })
 
