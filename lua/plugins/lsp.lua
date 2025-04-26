@@ -60,6 +60,7 @@ return {
             opts.ensure_installed = {
                 -- python
                 "pylsp",
+                "jedi_language_server",
                 "ruff",
                 --"basedpyright",
                 -- lua
@@ -245,6 +246,26 @@ return {
             --    },
             --})
 
+            -- https://github.com/pappasam/jedi-language-server?tab=readme-ov-file#configuration
+            lspconfig.jedi_language_server.setup({
+                cmd = {
+                    -- Needs ":PylspInstall pylsp-mypy python-lsp-ruff" to make the plugins
+                    -- available in the mason provided venv.
+                    vim.fn.stdpath("data") .. "/mason/bin/jedi-language-server",
+                    -- For debugging
+                    --"-v",
+                    --"--log-file",
+                    --"/home/lm/.local/state/nvim/jedi.log",
+                },
+                init_options = {
+                    -- add language server options here
+                    --jediSettings = { debug = true },
+                    hover = { enable = false },
+                    diagnostics = { enable = false },
+                },
+                capabilities = capabilities,
+            })
+
             lspconfig.pylsp.setup({
                 -- For debugging: tail -f /home/lm/.local/state/nvim/pylsp.log
                 cmd = {
@@ -252,9 +273,9 @@ return {
                     -- available in the mason provided venv.
                     vim.fn.stdpath("data") .. "/mason/bin/pylsp",
                     --"pylsp",
-                    "-v",
-                    "--log-file",
-                    "/home/lm/.local/state/nvim/pylsp.log",
+                    --"-v",
+                    --"--log-file",
+                    --"/home/lm/.local/state/nvim/pylsp.log",
                 },
                 settings = {
                     pylsp = {
@@ -277,7 +298,12 @@ return {
                             ruff = { enabled = true },
                             mccabe = { enabled = false },
                             rope_autoimport = { enabled = false },
-                            jedi = { enabled = false },
+                            jedi_completion = { enabled = false },
+                            jedi_definition = { enabled = false },
+                            jedi_hover = { enabled = false },
+                            jedi_references = { enabled = false },
+                            jedi_signature_help = { enabled = false },
+                            jedi_symbols = { enabled = false },
                         },
                     },
                 },
