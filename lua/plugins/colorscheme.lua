@@ -15,6 +15,10 @@ return {
                 underline = false, -- true/false; for global underline
                 undercurl = false, -- true/false; for global undercurl
             },
+            -- Add specific hightlight groups
+            on_highlights = function(highlights, colors)
+                highlights.NormalFloat.bg = colors.bg1
+            end,
         })
         vim.cmd([[ colorscheme NeoSolarized ]])
 
