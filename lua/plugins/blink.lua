@@ -44,7 +44,7 @@ return {
 
                 menu = {
                     -- Don't automatically show the completion menu
-                    auto_show = true,
+                    auto_show = false,
 
                     -- nvim-cmp style menu
                     draw = {
@@ -59,7 +59,7 @@ return {
                 documentation = { auto_show = false },
 
                 -- Show documentation when selecting a completion item
-                documentation = { auto_show = true, auto_show_delay_ms = 500 },
+                documentation = { auto_show = true, auto_show_delay_ms = 200 },
                 -- Display a preview of the selected item on the current line
                 ghost_text = { enabled = true },
             },
@@ -67,7 +67,8 @@ return {
             -- Default list of enabled providers defined so that you can extend it
             -- elsewhere in your config, without redefining it, due to `opts_extend`
             sources = {
-                default = { "copilot", "lsp", "path", "snippets", "buffer" },
+                -- default = { "copilot", "lsp", "spell", "path", "snippets", "buffer" },
+                default = { "copilot", "lsp", "snippets", "buffer" },
                 providers = {
                     copilot = {
                         name = "copilot",
@@ -82,19 +83,19 @@ return {
                         opts = {
                             -- EXAMPLE: Only enable source in `@spell` captures, and disable it
                             -- in `@nospell` captures.
-                            enable_in_context = function()
-                                local curpos = vim.api.nvim_win_get_cursor(0)
-                                local captures = vim.treesitter.get_captures_at_pos(0, curpos[1] - 1, curpos[2] - 1)
-                                local in_spell_capture = false
-                                for _, cap in ipairs(captures) do
-                                    if cap.capture == "spell" then
-                                        in_spell_capture = true
-                                    elseif cap.capture == "nospell" then
-                                        return false
-                                    end
-                                end
-                                return in_spell_capture
-                            end,
+                            --enable_in_context = function()
+                            --    local curpos = vim.api.nvim_win_get_cursor(0)
+                            --    local captures = vim.treesitter.get_captures_at_pos(0, curpos[1] - 1, curpos[2] - 1)
+                            --    local in_spell_capture = false
+                            --    for _, cap in ipairs(captures) do
+                            --        if cap.capture == "spell" then
+                            --            in_spell_capture = true
+                            --        elseif cap.capture == "nospell" then
+                            --            return false
+                            --        end
+                            --    end
+                            --    return in_spell_capture
+                            --end,
                         },
                     },
                 },
