@@ -45,7 +45,7 @@ local options = {
     -- https://neovim.io/doc/user/change.html#fo-table
     formatoptions = vim.opt["formatoptions"]._value .. "l",
     textwidth = 100,
-    colorcolumn = "100",
+    colorcolumn = "",
 
     tabpagemax = 100,
 
@@ -73,6 +73,9 @@ local options = {
     fillchars = vim.opt["fillchars"] + { diff = "_" },
     -- diffopt = "internal,filler,closeoff,indent-heuristic,linematch:60,algorithm:histogram",
     diffopt = "internal,filler,closeoff,indent-heuristic,linematch:60,algorithm:patience",
+
+    -- views can only be fully collapsed with the global statusline
+    laststatus = 3,
 }
 
 for k, v in pairs(options) do
@@ -117,4 +120,28 @@ vim.diagnostic.config({
             min = vim.diagnostic.severity.ERROR,
         },
     },
+})
+
+-- Highlight lines longer than 100
+vim.api.nvim_set_hl(0, "OverLength", { bg = "#3b0000" }) -- dark red
+local excluded_filetypes = {
+    "markdown",
+    "text",
+    "help",
+    "nerdtree",
+    "TelescopePrompt",
+    "gitcommit",
+    "Avante",
+}
+vim.api.nvim_create_autocmd({ "BufEnter", "BufWinEnter" }, {
+    callback = function()
+        local ft = vim.bo.filetype
+        if vim.tbl_contains(excluded_filetypes, ft) then
+            return -- Skip overlength match for these filetypes
+        end
+
+        -- Add the OverLength highlight
+        vim.api.nvim_set_hl(0, "OverLength", { bg = "#3b0000" })
+        vim.fn.matchadd("OverLength", "\\%101v.*")
+    end,
 })
