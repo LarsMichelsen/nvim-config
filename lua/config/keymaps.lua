@@ -42,8 +42,10 @@ wk.add({
 local current_min_severity = 1 -- Does not work for some reason: vim.diagnostic.severity.CRIT
 
 local function toggle_diagnostic_severity()
-    if current_min_severity == vim.diagnostic.severity.WARN then
+    if current_min_severity == vim.diagnostic.severity.INFO then
         current_min_severity = vim.diagnostic.severity.ERROR
+    elseif current_min_severity == vim.diagnostic.severity.WARN then
+        current_min_severity = vim.diagnostic.severity.INFO
     else
         current_min_severity = vim.diagnostic.severity.WARN
     end
@@ -63,9 +65,17 @@ local function toggle_diagnostic_severity()
     })
     vim.diagnostic.config(current_config)
 
-    print(
-        "Diagnostics severity set to: " .. (current_min_severity == vim.diagnostic.severity.ERROR and "ERROR" or "WARN")
-    )
+    if current_min_severity == vim.diagnostic.severity.INFO then
+        name = "INFO"
+    elseif current_min_severity == vim.diagnostic.severity.WARN then
+        name = "WARN"
+    elseif current_min_severity == vim.diagnostic.severity.ERROR then
+        name = "ERROR"
+    else
+        name = "CRIT"
+    end
+
+    print("Diagnostics severity set to: " .. name)
 end
 
 wk.add({
