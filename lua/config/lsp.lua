@@ -130,10 +130,42 @@ vim.lsp.config("ltex", {
     },
 })
 
+vim.lsp.config("jedi-language-server", {
+    init_options = {
+        diagnostics = {
+            enable = false,
+        },
+        hover = {
+            enable = false,
+        },
+        jediSettings = {
+            debug = false,
+        },
+        workspace = {
+            -- TESTING
+            extraPaths = {
+                "/home/lm/git/checkmk",
+                "./cmk",
+                ".",
+            },
+            extra_paths = {
+                "/home/lm/git/checkmk",
+                "./cmk",
+                ".",
+            },
+            symbols = {
+                ignoreFolders = { "__pypackages__", "__pycache__", "venv" },
+                maxSymbols = 20,
+            },
+        },
+    },
+})
+
 vim.lsp.enable({
     "jedi-language-server",
     "ruff",
     "pylsp",
+    --"basedpyright",
     "ltex-lsp",
 })
 
