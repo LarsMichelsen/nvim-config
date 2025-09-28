@@ -32,6 +32,13 @@ map("n", "n", "nzz")
 map("n", "<Down>", "gj")
 map("n", "<Up>", "gk")
 
+vim.keymap.set({"n", "x"}, "(", function()
+   vim.fn.search("['\"[({<]", 'W')
+end)
+vim.keymap.set({"n", "x"}, ")", function()
+   vim.fn.search("[]'\")}>]", 'bW')
+end)
+
 wk.add({
     { "<C-f>", ":%s/<C-r><C-w>//g<Left><Left>", desc = "Replace word under cursor" },
     { "<F10>", ':exec &bg=="light"? "set bg=dark" : "set bg=light"<CR>', desc = "Toggle light/dark mode" },

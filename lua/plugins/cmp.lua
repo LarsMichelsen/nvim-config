@@ -9,6 +9,11 @@ return {
             opts = nil,
         },
         opts = function(_, opts)
+            opts.performance = {
+                -- debounce = 300,
+                -- Give AI's a bit more time
+                fetching_timeout = 2000,
+            }
             opts.experimental = {
                 ghost_text = true,
             }
@@ -35,6 +40,19 @@ return {
             local cmp_autopairs = require("nvim-autopairs.completion.cmp")
             cmp.event:on("confirm_done", cmp_autopairs.on_confirm_done())
 
+            -- Hide suggestion automatically when completion menu is open
+            local suggestion = require("copilot.suggestion")
+            cmp.event:on("menu_opened", function()
+                if suggestion.is_visible() then
+                    suggestion.dismiss()
+                end
+                vim.b.copilot_suggestion_hidden = true
+            end)
+            cmp.event:on("menu_closed", function()
+                vim.b.copilot_suggestion_hidden = false
+                suggestion.next()
+            end)
+
             local has_words_before = function()
                 unpack = unpack or table.unpack
                 local line, col = unpack(vim.api.nvim_win_get_cursor(0))
@@ -46,30 +64,56 @@ return {
                 vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes(key, true, true, true), mode, true)
             end
 
-            opts.mapping = cmp.mapping.preset.insert({
-                -- See also: https://github.com/hrsh7th/nvim-cmp/wiki/Example-mappings
-                ["<C-b>"] = cmp.mapping.scroll_docs(-4),
-                ["<C-f>"] = cmp.mapping.scroll_docs(4),
-                ["<C-Space>"] = cmp.mapping.complete(),
-                ["<C-e>"] = cmp.mapping.abort(),
-                ["<CR>"] = cmp.mapping({
-                    -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
-                    i = cmp.mapping.confirm({ select = false }),
-                    s = cmp.mapping.confirm({ select = false }),
-                    -- c = function(fallback)
-                    --     if cmp.visible() and cmp.get_active_entry() then
-                    --        cmp.confirm({ behavior = cmp.ConfirmBehavior.Replace, select = false })
-                    --        cmp.complete()
-                    --      else
-                    --        fallback()
-                    --      end
-                    -- end
+            opts.mapping = {
+                ["<C-Space>"] = cmp.mapping(cmp.mapping.complete(), { "i" }),
+                ["<Down>"] = cmp.mapping(
+                    cmp.mapping.select_next_item({ behavior = cmp.SelectBehavior.Select }),
+                    { "i" }
+                ),
+                ["<Up>"] = cmp.mapping(cmp.mapping.select_prev_item({ behavior = cmp.SelectBehavior.Select }), { "i" }),
+                ["<C-n>"] = cmp.mapping({
+                    i = function(fallback)
+                        if cmp.visible() then
+                            cmp.select_next_item({ behavior = cmp.SelectBehavior.Select })
+                        else
+                            fallback()
+                        end
+                    end,
                 }),
-
+                ["<C-p>"] = cmp.mapping({
+                    i = function(fallback)
+                        if cmp.visible() then
+                            cmp.select_prev_item({ behavior = cmp.SelectBehavior.Select })
+                        else
+                            fallback()
+                        end
+                    end,
+                }),
+                ["<CR>"] = cmp.mapping({
+                    i = cmp.mapping.confirm({ behavior = cmp.ConfirmBehavior.Replace, select = false }),
+                    c = function(fallback)
+                        if cmp.visible() then
+                            cmp.confirm({ behavior = cmp.ConfirmBehavior.Replace, select = false })
+                        else
+                            fallback()
+                        end
+                    end,
+                }),
+                ["<C-y>"] = cmp.mapping({
+                    i = cmp.mapping.confirm({ select = false }),
+                }),
+                ["<C-e>"] = cmp.mapping({
+                    i = cmp.mapping.abort(),
+                }),
                 ["<Tab>"] = cmp.mapping(function(fallback)
                     if cmp.visible() then
-                        -- cmp.select_next_item()
-                        cmp.confirm({ behavior = cmp.ConfirmBehavior.Insert, select = true })
+                        --cmp.confirm({ behavior = cmp.ConfirmBehavior.Insert, select = true })
+                        -- Confirm with tab, and if no entry is selected, will confirm the first item
+                        local entry = cmp.get_selected_entry()
+                        if not entry then
+                            cmp.select_next_item({ behavior = cmp.SelectBehavior.Select })
+                        end
+                        cmp.confirm()
                     elseif require("copilot.suggestion").is_visible() then
                         require("copilot.suggestion").accept()
                     elseif vim.fn["vsnip#available"](1) == 1 then
@@ -80,23 +124,10 @@ return {
                         fallback() -- The fallback function sends a already mapped key. In this case, it's probably `<Tab>`.
                     end
                 end, { "i", "s" }),
-
-                ["<S-Tab>"] = cmp.mapping(function()
-                    if cmp.visible() then
-                        cmp.select_prev_item()
-                    elseif vim.fn["vsnip#jumpable"](-1) == 1 then
-                        feedkey("<Plug>(vsnip-jump-prev)", "")
-                    else
-                        fallback()
-                    end
-                end, { "i", "s" }),
-            })
+            }
 
             opts.sources = cmp.config.sources({
-                { name = "nvim_lsp", priority = 1000 },
-                { name = "nvim_lsp_signature_help", priority = 1000 },
-                { name = "copilot", group_index = 900 },
-                { name = "vsnip", priority = 800 },
+                { name = "copilot", group_index = 1000 },
                 {
                     -- search all buffers
                     -- Maybe try https://github.com/tzachar/cmp-fuzzy-buffer
@@ -106,7 +137,15 @@ return {
                             return vim.api.nvim_list_bufs()
                         end,
                     },
+                    entry_filter = function(entry)
+                        return not entry.exact
+                    end,
+                    priority = 900,
+                    max_item_count = 5,
                 },
+                { name = "nvim_lsp", priority = 800 },
+                { name = "nvim_lsp_signature_help", priority = 700 },
+                --{ name = "vsnip", priority = 600 },
                 { name = "path" },
             })
 
@@ -116,7 +155,6 @@ return {
                     maxwidth = 50, -- prevent the popup from showing more than provided characters (e.g 50 will not show more than 50 characters)
                     show_labelDetails = true,
                     ellipsis_char = "...", -- when popup menu exceed maxwidth, the truncated part would show ellipsis_char instead (must define maxwidth first)
-                    -- symbol_map = { Codeium = "", },
                     symbol_map = { Copilot = "" },
 
                     -- The function below will be called before any actual modifications from lspkind
@@ -136,33 +174,6 @@ return {
                     { name = "buffer" },
                 }),
             })
-
-            -- -- Use buffer source for `/` and `?` (if you enabled `native_menu`, this won't work anymore).
-            -- cmp.setup.cmdline({ '/', '?' }, {
-            --   mapping = cmp.mapping.preset.cmdline(),
-            --   sources = {
-            --     { name = 'buffer' }
-            --   }
-            -- })
-            --
-            -- -- Use cmdline & path source for ':' (if you enabled `native_menu`, this won't work anymore).
-            -- cmp.setup.cmdline(':', {
-            --   -- mapping = cmp.mapping.preset.cmdline(),
-            --   sources = {
-            --     { name = 'cmdline' }
-            --   }
-            --   -- cmp.config.sources(
-            --   -- --{
-            --   -- --  { name = 'cmdline_history' }
-            --   -- --}
-            --   -- {
-            --   --   { name = 'path' }
-            --   -- }
-            --   -- -- {
-            --   -- --   { name = 'cmdline' }
-            --   -- -- }
-            --   -- ),
-            -- })
         end,
     },
     { "hrsh7th/cmp-nvim-lsp" },

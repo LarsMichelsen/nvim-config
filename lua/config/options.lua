@@ -132,6 +132,7 @@ local excluded_filetypes = {
     "TelescopePrompt",
     "gitcommit",
     "Avante",
+    "",
 }
 vim.api.nvim_create_autocmd({ "BufEnter", "BufWinEnter" }, {
     callback = function()

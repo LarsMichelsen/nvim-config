@@ -1,6 +1,5 @@
 return {
     {
-        -- Provides code suggestions based on the current context
         "zbirenbaum/copilot.lua",
         cmd = "Copilot",
         build = ":Copilot auth",
@@ -8,14 +7,22 @@ return {
         config = function()
             require("copilot").setup({
                 panel = {
-                    enabled = false, -- Use blink
-                    auto_refresh = true,
+                    enabled = false,
+                    auto_refresh = false,
                 },
                 suggestion = {
-                    enabled = false, -- Use blink
+                    enabled = true,
                     auto_trigger = true,
                     -- done by nvim-cmp
                     accept = false, -- disable built-in keymapping
+                    --keymap = {
+                    --    accept = "<C-i>",
+                    --    accept_word = false,
+                    --    accept_line = false,
+                    --    next = "<C-n>",
+                    --    prev = "<C-p>",
+                    --    dismiss = "<C-x>",
+                    --},
                 },
                 filetypes = {
                     yaml = false,
@@ -28,7 +35,15 @@ return {
                     cvs = false,
                     ["."] = false,
                 },
-                copilot_model = "gpt-4o-copilot",
+                logger = {
+                    file = vim.fn.stdpath("log") .. "/copilot-lua.log",
+                    file_log_level = vim.log.levels.INFO,
+                    print_log_level = vim.log.levels.WARN,
+                    trace_lsp = "off", -- "off" | "messages" | "verbose"
+                    trace_lsp_progress = false,
+                    log_lsp_messages = false,
+                },
+                --copilot_model = "gpt-41-copilot",
                 should_attach = function(_, bufname)
                     local cwd = vim.fn.getcwd() .. "/"
 
@@ -41,6 +56,7 @@ return {
                     local enable_patterns = {
                         home_dir .. "/.config/nvim/",
                         home_dir .. "/git/checkmk/",
+                        home_dir .. "/git/checkmk-claude/",
                         home_dir .. "/git/checkmk%-%d%.%d%.%d/",
                         home_dir .. "/git/cma/",
                         home_dir .. "/git/cma-%d%.%d/",
@@ -57,12 +73,12 @@ return {
 
                     -- Disable copilot on buffers bigger than 300kb
                     -- (https://til.codeinthehole.com/posts/how-to-automatically-disable-github-copilot-in-vim-when-editing-large-files/)
-                    if bufname ~= "" then
-                        local fsize = vim.fn.getfsize(bufname)
-                        if fsize > 300000 or fsize == -2 then
-                            enable_ai = false
-                        end
-                    end
+                    --if bufname ~= "" then
+                    --    local fsize = vim.fn.getfsize(bufname)
+                    --    if fsize > 300000 or fsize == -2 then
+                    --        enable_ai = false
+                    --    end
+                    --end
 
                     return enable_ai
                 end,
@@ -81,12 +97,12 @@ return {
             --     end)
             -- end
 
-            -- -- Clean virtual text when leaving insert mode through <Ctrl-c>
-            -- -- Maybe I should just stop using this key combination ;-). It's a bit annoying
-            -- vim.keymap.set("i", "<C-c>", function()
-            --     require("copilot/suggestion").dismiss()
-            --     vim.cmd("stopinsert")
-            -- end, { noremap = false, silent = true })
+            -- Clean virtual text when leaving insert mode through <Ctrl-c>
+            -- Maybe I should just stop using this key combination ;-). It's a bit annoying
+            vim.keymap.set("i", "<C-c>", function()
+                require("copilot/suggestion").dismiss()
+                vim.cmd("stopinsert")
+            end, { noremap = false, silent = true })
 
             -- Copilot is attached as Lsp. To investigate communication with the server,
             -- set log level to DEBUG and have a look at the lsp log, e.g. with:
@@ -114,161 +130,209 @@ return {
             require("copilot_cmp").setup()
         end,
     },
+    --{
+    --    -- See also https://github.com/jellydn/lazy-nvim-ide/blob/main/lua/plugins/extras/copilot-chat-v2.lua
+    --    -- for ideas to make more use of it
+    --    "CopilotC-Nvim/CopilotChat.nvim",
+    --    dependencies = {
+    --        { "zbirenbaum/copilot.lua" }, -- or github/copilot.vim
+    --        { "nvim-lua/plenary.nvim" }, -- for curl, log wrapper
+    --    },
+    --    opts = {
+    --        mode = "split",
+    --        debug = true,
+    --        -- show_help = "yes",
+    --        prompts = {
+    --            -- Code related prompts
+    --            Explain = "Please explain how the following code works.",
+    --            Review = "Please review the following code and provide suggestions for improvement.",
+    --            Tests = "Please explain how the selected code works, then generate unit tests for it.",
+    --            Refactor = "Please refactor the following code to improve its clarity and readability.",
+    --            FixCode = "Please fix the following code to make it work as intended.",
+    --            FixError = "Please explain the error in the following text and provide a solution.",
+    --            BetterNamings = "Please provide better names for the following variables and functions.",
+    --            Documentation = "Please provide documentation for the following code.",
+    --            -- Text related prompts
+    --            Summarize = "Please summarize the following text.",
+    --            Spelling = "Please correct any grammar and spelling errors in the following text.",
+    --            Wording = "Please improve the grammar and wording of the following text.",
+    --            Concise = "Please rewrite the following text to make it more concise.",
+    --        },
+    --    },
+    --    branch = "main",
+    --    build = function()
+    --        vim.defer_fn(function()
+    --            vim.cmd("UpdateRemotePlugins")
+    --            vim.notify("CopilotChat - Updated remote plugins. Please restart Neovim.")
+    --        end, 3000)
+    --    end,
+    --    event = "VeryLazy",
+    --    keys = {
+    --        { "<leader>ae", "<cmd>CopilotChatExplain<cr>", desc = "Chat - Explain code" },
+    --        { "<leader>at", "<cmd>CopilotChatTests<cr>", desc = "Chat - Generate tests" },
+    --        { "<leader>ar", "<cmd>CopilotChatReview<cr>", desc = "Chat - Review code" },
+    --        { "<leader>aR", "<cmd>CopilotChatRefactor<cr>", desc = "Chat - Refactor code" },
+    --        { "<leader>an", "<cmd>CopilotChatBetterNamings<cr>", desc = "Chat - Better naming" },
+    --        { "<leader>af", "<cmd>CopilotChatFixCode<cr>", desc = "Chat - Fix code" },
+    --        { "<leader>as", "<cmd>CopilotChatSummarize<cr>", desc = "Chat - Summarize text" },
+    --        { "<leader>aS", "<cmd>CopilotChatSummarize<cr>", desc = "Chat - Spelling text" },
+    --        { "<leader>aw", "<cmd>CopilotChatWording<cr>", desc = "Chat - Improve text" },
+    --        { "<leader>ac", "<cmd>CopilotChatConcise<cr>", desc = "Chat - Concise text" },
+    --    },
+    --},
+    -- UI integration was not good
+    --{
+    --    "yetone/avante.nvim",
+    --    event = "VeryLazy",
+    --    version = false, -- Never set this value to "*"! Never!
+    --    lazy = true,
+    --    opts = {
+    --        -- add any opts here
+    --        -- for example
+    --        provider = "openai",
+    --        providers = {
+    --            openai = {
+    --                endpoint = "https://api.openai.com/v1",
+    --                model = "gpt-4o", -- your desired model (or use gpt-4o, etc.)
+    --                timeout = 30000, -- Timeout in milliseconds, increase this for reasoning models
+    --                extra_request_body = {
+    --                    temperature = 0,
+    --                    max_completion_tokens = 8192, -- Increase this to include reasoning tokens (for reasoning models)
+    --                },
+    --                --reasoning_effort = "medium", -- low|medium|high, only used for reasoning models
+    --            },
+    --        },
+    --        windows = {
+    --            sidebar_header = {
+    --                enabled = false, -- true, false to enable/disable the header
+    --                align = "center", -- left, center, right for title
+    --                rounded = false,
+    --            },
+    --        },
+    --        behaviour = {
+    --            -- try to fix slow typing
+    --            enable_token_counting = false,
+    --        },
+    --    },
+    --    -- if you want to build from source then do `make BUILD_FROM_SOURCE=true`
+    --    build = "make",
+    --    dependencies = {
+    --        "nvim-treesitter/nvim-treesitter",
+    --        "stevearc/dressing.nvim",
+    --        "nvim-lua/plenary.nvim",
+    --        "MunifTanjim/nui.nvim",
+    --        --- The below dependencies are optional,
+    --        "echasnovski/mini.pick", -- for file_selector provider mini.pick
+    --        "nvim-telescope/telescope.nvim", -- for file_selector provider telescope
+    --        --"hrsh7th/nvim-cmp", -- autocompletion for avante commands and mentions
+    --        "ibhagwan/fzf-lua", -- for file_selector provider fzf
+    --        "nvim-tree/nvim-web-devicons", -- or echasnovski/mini.icons
+    --        "zbirenbaum/copilot.lua", -- for providers='copilot'
+    --        {
+    --            -- support for image pasting
+    --            "HakonHarnes/img-clip.nvim",
+    --            event = "VeryLazy",
+    --            opts = {
+    --                -- recommended settings
+    --                default = {
+    --                    embed_image_as_base64 = false,
+    --                    prompt_for_file_name = false,
+    --                    drag_and_drop = {
+    --                        insert_mode = true,
+    --                    },
+    --                    -- required for Windows users
+    --                    use_absolute_path = true,
+    --                },
+    --            },
+    --        },
+    --        {
+    --            -- Make sure to set this up properly if you have lazy=true
+    --            "MeanderingProgrammer/render-markdown.nvim",
+    --            opts = {
+    --                file_types = { "Avante" },
+    --            },
+    --            ft = { "Avante" },
+    --        },
+    --    },
+    --    --config = function()
+    --    --    vim.api.nvim_set_hl(0, "AvanteSidebarNormal", { link = "Normal" })
+    --    --    vim.api.nvim_set_hl(0, "AvanteSidebarWinSeparator", { link = "WinSeparator" })
+
+    --    --    local normal_bg = string.format("#%06x", vim.api.nvim_get_hl(0, { name = "Normal" }).bg)
+    --    --    vim.api.nvim_set_hl(0, "AvanteSidebarWinHorizontalSeparator", { fg = normal_bg })
+    --    --    --vim.api.nvim_set_hl(0, "AvanteSidebarWinSeparator", { fg = "#ff0000", bg = "" })
+    --    --    --vim.api.nvim_set_hl(0, "AvanteSidebarWinHorizontalSeparator", { fg = "#yourcolor", bg = "" })
+    --    --end,
+    --    config = function(_, opts)
+    --        require("avante").setup(opts)
+
+    --        vim.api.nvim_create_autocmd("FileType", {
+    --            pattern = "Avante",
+    --            callback = function()
+    --                local normal_fg = string.format("#%06x", vim.api.nvim_get_hl(0, { name = "Normal" }).fg)
+    --                local normal_bg = string.format("#%06x", vim.api.nvim_get_hl(0, { name = "Normal" }).bg)
+    --                local win_sep_fg = string.format("#%06x", vim.api.nvim_get_hl(0, { name = "WinSeparator" }).fg)
+
+    --                vim.api.nvim_set_hl(0, "AvantePopupHint", { link = "Normal" })
+    --                vim.api.nvim_set_hl(0, "AvantePromptInputBorder", { link = "Normal" })
+    --                vim.api.nvim_set_hl(0, "AvanteSidebarWinSeparator", { fg = normal_fg, bg = normal_bg })
+    --                vim.api.nvim_set_hl(0, "AvanteSidebarWinHorizontalSeparator", { fg = win_sep_fg, bg = normal_bg })
+    --                vim.api.nvim_set_hl(0, "AvanteSidebarNormal", { link = "Normal" })
+    --            end,
+    --        })
+    --    end,
+    --},
+    -- {
+    --     "joshuavial/aider.nvim",
+    --     opts = {
+    --         -- your configuration comes here
+    --         -- if you don't want to use the default settings
+    --         auto_manage_context = true, -- automatically manage buffer context
+    --         default_bindings = true, -- use default <leader>A keybindings
+    --         debug = false, -- enable debug logging
+    --     },
+    -- },
+    -- Not so nice buffer switching and so on. Might improve with fixed shortucts.
+    --{
+    --    "wtfox/claude-chat.nvim",
+    --    config = true,
+    --},
     {
-        -- See also https://github.com/jellydn/lazy-nvim-ide/blob/main/lua/plugins/extras/copilot-chat-v2.lua
-        -- for ideas to make more use of it
-        "CopilotC-Nvim/CopilotChat.nvim",
-        dependencies = {
-            { "zbirenbaum/copilot.lua" }, -- or github/copilot.vim
-            { "nvim-lua/plenary.nvim" }, -- for curl, log wrapper
-        },
+        "coder/claudecode.nvim",
+        dependencies = { "folke/snacks.nvim" },
+        config = true,
         opts = {
-            mode = "split",
-            debug = true,
-            -- show_help = "yes",
-            prompts = {
-                -- Code related prompts
-                Explain = "Please explain how the following code works.",
-                Review = "Please review the following code and provide suggestions for improvement.",
-                Tests = "Please explain how the selected code works, then generate unit tests for it.",
-                Refactor = "Please refactor the following code to improve its clarity and readability.",
-                FixCode = "Please fix the following code to make it work as intended.",
-                FixError = "Please explain the error in the following text and provide a solution.",
-                BetterNamings = "Please provide better names for the following variables and functions.",
-                Documentation = "Please provide documentation for the following code.",
-                -- Text related prompts
-                Summarize = "Please summarize the following text.",
-                Spelling = "Please correct any grammar and spelling errors in the following text.",
-                Wording = "Please improve the grammar and wording of the following text.",
-                Concise = "Please rewrite the following text to make it more concise.",
+            request_timeout = 2.5,
+            throttle = 1500, -- Increase to reduce costs and avoid rate limits
+            debounce = 600, -- Increase to reduce costs and avoid rate limits
+            terminal_cmd = "~/.claude/local/claude",
+            terminal = {
+                provider = "external",
+                provider_opts = {
+                    external_terminal_cmd = function(cmd, env)
+                        return { "remotinator", "vsplit", "-x", "bash -ic '" .. cmd .. " --ide ; bash'" }
+                    end,
+                },
             },
         },
-        branch = "main",
-        build = function()
-            vim.defer_fn(function()
-                vim.cmd("UpdateRemotePlugins")
-                vim.notify("CopilotChat - Updated remote plugins. Please restart Neovim.")
-            end, 3000)
-        end,
-        event = "VeryLazy",
         keys = {
-            { "<leader>ae", "<cmd>CopilotChatExplain<cr>", desc = "Chat - Explain code" },
-            { "<leader>at", "<cmd>CopilotChatTests<cr>", desc = "Chat - Generate tests" },
-            { "<leader>ar", "<cmd>CopilotChatReview<cr>", desc = "Chat - Review code" },
-            { "<leader>aR", "<cmd>CopilotChatRefactor<cr>", desc = "Chat - Refactor code" },
-            { "<leader>an", "<cmd>CopilotChatBetterNamings<cr>", desc = "Chat - Better naming" },
-            { "<leader>af", "<cmd>CopilotChatFixCode<cr>", desc = "Chat - Fix code" },
-            { "<leader>as", "<cmd>CopilotChatSummarize<cr>", desc = "Chat - Summarize text" },
-            { "<leader>aS", "<cmd>CopilotChatSummarize<cr>", desc = "Chat - Spelling text" },
-            { "<leader>aw", "<cmd>CopilotChatWording<cr>", desc = "Chat - Improve text" },
-            { "<leader>ac", "<cmd>CopilotChatConcise<cr>", desc = "Chat - Concise text" },
-        },
-    },
-    {
-        "yetone/avante.nvim",
-        event = "VeryLazy",
-        version = false, -- Never set this value to "*"! Never!
-        lazy = true,
-        opts = {
-            -- add any opts here
-            -- for example
-            provider = "openai",
-            openai = {
-                endpoint = "https://api.openai.com/v1",
-                model = "gpt-4o", -- your desired model (or use gpt-4o, etc.)
-                timeout = 30000, -- Timeout in milliseconds, increase this for reasoning models
-                temperature = 0,
-                max_completion_tokens = 8192, -- Increase this to include reasoning tokens (for reasoning models)
-                --reasoning_effort = "medium", -- low|medium|high, only used for reasoning models
-            },
-            windows = {
-                sidebar_header = {
-                    enabled = false, -- true, false to enable/disable the header
-                    align = "center", -- left, center, right for title
-                    rounded = false,
-                },
-            },
-            behaviour = {
-                -- try to fix slow typing
-                enable_token_counting = false,
-            },
-        },
-        -- if you want to build from source then do `make BUILD_FROM_SOURCE=true`
-        build = "make",
-        dependencies = {
-            "nvim-treesitter/nvim-treesitter",
-            "stevearc/dressing.nvim",
-            "nvim-lua/plenary.nvim",
-            "MunifTanjim/nui.nvim",
-            --- The below dependencies are optional,
-            "echasnovski/mini.pick", -- for file_selector provider mini.pick
-            "nvim-telescope/telescope.nvim", -- for file_selector provider telescope
-            --"hrsh7th/nvim-cmp", -- autocompletion for avante commands and mentions
-            "ibhagwan/fzf-lua", -- for file_selector provider fzf
-            "nvim-tree/nvim-web-devicons", -- or echasnovski/mini.icons
-            "zbirenbaum/copilot.lua", -- for providers='copilot'
+            { "<leader>ax", nil, desc = "AI/Claude Code" },
+            { "<leader>ac", "<cmd>ClaudeCode<cr>", desc = "Toggle Claude" },
+            { "<leader>af", "<cmd>ClaudeCodeFocus<cr>", desc = "Focus Claude" },
+            { "<leader>ar", "<cmd>ClaudeCode --resume<cr>", desc = "Resume Claude" },
+            { "<leader>aC", "<cmd>ClaudeCode --continue<cr>", desc = "Continue Claude" },
+            { "<leader>am", "<cmd>ClaudeCodeSelectModel<cr>", desc = "Select Claude model" },
+            { "<leader>ab", "<cmd>ClaudeCodeAdd %<cr>", desc = "Add current buffer" },
+            { "<leader>as", "<cmd>ClaudeCodeSend<cr>", mode = "v", desc = "Send to Claude" },
             {
-                -- support for image pasting
-                "HakonHarnes/img-clip.nvim",
-                event = "VeryLazy",
-                opts = {
-                    -- recommended settings
-                    default = {
-                        embed_image_as_base64 = false,
-                        prompt_for_file_name = false,
-                        drag_and_drop = {
-                            insert_mode = true,
-                        },
-                        -- required for Windows users
-                        use_absolute_path = true,
-                    },
-                },
+                "<leader>as",
+                "<cmd>ClaudeCodeTreeAdd<cr>",
+                desc = "Add file",
+                ft = { "NvimTree", "neo-tree", "oil", "minifiles", "netrw" },
             },
-            {
-                -- Make sure to set this up properly if you have lazy=true
-                "MeanderingProgrammer/render-markdown.nvim",
-                opts = {
-                    file_types = { "markdown", "Avante" },
-                },
-                ft = { "markdown", "Avante" },
-            },
-        },
-        --config = function()
-        --    vim.api.nvim_set_hl(0, "AvanteSidebarNormal", { link = "Normal" })
-        --    vim.api.nvim_set_hl(0, "AvanteSidebarWinSeparator", { link = "WinSeparator" })
-
-        --    local normal_bg = string.format("#%06x", vim.api.nvim_get_hl(0, { name = "Normal" }).bg)
-        --    vim.api.nvim_set_hl(0, "AvanteSidebarWinHorizontalSeparator", { fg = normal_bg })
-        --    --vim.api.nvim_set_hl(0, "AvanteSidebarWinSeparator", { fg = "#ff0000", bg = "" })
-        --    --vim.api.nvim_set_hl(0, "AvanteSidebarWinHorizontalSeparator", { fg = "#yourcolor", bg = "" })
-        --end,
-        config = function(_, opts)
-            require("avante").setup(opts)
-
-            vim.api.nvim_create_autocmd("FileType", {
-                pattern = "Avante",
-                callback = function()
-                    local normal_fg = string.format("#%06x", vim.api.nvim_get_hl(0, { name = "Normal" }).fg)
-                    local normal_bg = string.format("#%06x", vim.api.nvim_get_hl(0, { name = "Normal" }).bg)
-                    local win_sep_fg = string.format("#%06x", vim.api.nvim_get_hl(0, { name = "WinSeparator" }).fg)
-
-                    vim.api.nvim_set_hl(0, "AvantePopupHint", { link = "Normal" })
-                    vim.api.nvim_set_hl(0, "AvantePromptInputBorder", { link = "Normal" })
-                    vim.api.nvim_set_hl(0, "AvanteSidebarWinSeparator", { fg = normal_fg, bg = normal_bg })
-                    vim.api.nvim_set_hl(0, "AvanteSidebarWinHorizontalSeparator", { fg = win_sep_fg, bg = normal_bg })
-                    vim.api.nvim_set_hl(0, "AvanteSidebarNormal", { link = "Normal" })
-                end,
-            })
-        end,
-    },
-    {
-        "joshuavial/aider.nvim",
-        opts = {
-            -- your configuration comes here
-            -- if you don't want to use the default settings
-            auto_manage_context = true, -- automatically manage buffer context
-            default_bindings = true, -- use default <leader>A keybindings
-            debug = false, -- enable debug logging
+            -- Diff management
+            { "<leader>aa", "<cmd>ClaudeCodeDiffAccept<cr>", desc = "Accept diff" },
+            { "<leader>ad", "<cmd>ClaudeCodeDiffDeny<cr>", desc = "Deny diff" },
         },
     },
 }

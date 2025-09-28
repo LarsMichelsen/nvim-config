@@ -24,7 +24,8 @@ return {
                 { "<C-l>", builtin.git_bcommits, desc = "Find git commits" },
                 { "<C-p>", builtin.git_files, desc = "Find git files" },
                 { "<C-t>", builtin.find_files, desc = "Find files" },
-                { "<leader>wf", builtin.lsp_references, desc = "Find word under cursor" },
+                --{ "<leader>wf", builtin.lsp_references, desc = "Find word under cursor" },
+                { "<leader>wf", builtin.grep_string, desc = "Find word under cursor" },
             })
         end,
         opts = function()
