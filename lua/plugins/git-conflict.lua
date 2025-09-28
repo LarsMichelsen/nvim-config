@@ -1,22 +1,18 @@
-return {}
--- return {
---     "akinsho/git-conflict.nvim",
---     version = "*",
---     config = true,
---     default_mappings = false,
---     opts = {
---         on_attach = function(bufnr)
---             vim.keymap.set("n", "co", "<Plug>(git-conflict-ours)", { buffer = bufnr, desc = "Choose ours" })
---             vim.keymap.set("n", "ct", "<Plug>(git-conflict-theirs)", { buffer = bufnr, desc = "Choose theirs" })
---             vim.keymap.set("n", "cb", "<Plug>(git-conflict-both)", { buffer = bufnr, desc = "Choose both" })
---             vim.keymap.set("n", "c0", "<Plug>(git-conflict-none)", { buffer = bufnr, desc = "Choose none" })
---             vim.keymap.set(
---                 "n",
---                 "[x",
---                 "<Plug>(git-conflict-prev-conflict)",
---                 { buffer = bufnr, desc = "Previous conflict" }
---             )
---             vim.keymap.set("n", "]x", "<Plug>(git-conflict-next-conflict)", { buffer = bufnr, desc = "Next conflict" })
---         end,
---     },
--- }
+return {
+    "akinsho/git-conflict.nvim",
+    version = "*",
+    config = true,
+    disable_diagnostics = true, -- Disable the diagnostics in a buffer whilst it is conflicted
+    default_mappings = false,
+    init = function()
+        local wk = require("which-key")
+        wk.add({
+            { "ck", "<cmd>GitConflictChooseOurs<CR>", desc = "Choose ours" },
+            { "cj", "<cmd>GitConflictChooseTheirs<CR>", desc = "Choose theirs" },
+            { "cb", "<cmd>GitConflictChooseBoth<CR>", desc = "Choose both" },
+            { "c0", "<cmd>GitConflictChooseNone<CR>", desc = "Choose none" },
+            { "[x", "<cmd>GitConflictPrevConflict<CR>", desc = "Previous conflict" },
+            { "]x", "<cmd>GitConflictNextConflict<CR>", desc = "Next conflict" },
+        })
+    end,
+}
