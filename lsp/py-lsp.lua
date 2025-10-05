@@ -28,8 +28,8 @@ return {
         -- Needs ":PylspInstall pylsp-mypy python-lsp-ruff" to make the plugins
         -- available in the mason provided venv.
         --vim.fn.stdpath("data") .. "/mason/bin/pylsp",
-        "/pylsp",
-        "-v",
+        "pylsp",
+        --"-vv",
         "--log-file",
         "/home/lm/.local/state/nvim/pylsp.log",
     },
@@ -42,4 +42,9 @@ return {
         "Pipfile",
         ".git",
     },
+    capabilities = require("cmp_nvim_lsp").default_capabilities(vim.lsp.protocol.make_client_capabilities()),
+    on_attach = function(client, bufnr)
+        -- Provided by basedpyright
+        client.server_capabilities.signatureHelpProvider = nil
+    end,
 }

@@ -123,4 +123,19 @@ return {
         dependencies = { "neovim/nvim-lspconfig" },
     },
     { "barreiroleo/ltex-extra.nvim" },
+    {
+        "ray-x/lsp_signature.nvim",
+        event = "InsertEnter",
+        opts = {
+            --debug = true,
+            --log_path = vim.fn.stdpath("log") .. "/lsp_signature.log",
+            bind = true,
+            handler_opts = {
+                border = "single",
+            },
+            fix_pos = true, -- do not change position until finished
+            hint_enable = false, -- disable virtual hint
+            max_width = 80,
+        },
+    },
 }

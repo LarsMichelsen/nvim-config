@@ -1,4 +1,4 @@
-vim.lsp.config("pylsp", {
+vim.lsp.config("py-lsp", {
     settings = {
         pylsp = {
             plugins = {
@@ -19,7 +19,15 @@ vim.lsp.config("pylsp", {
                 pylint_lint = { enabled = false },
                 ruff = { enabled = false },
                 mccabe = { enabled = false },
-                rope_autoimport = { enabled = false },
+                rope_autoimport = {
+                    enabled = true,
+                    completions = {
+                        enabled = false,
+                    },
+                    code_actions = {
+                        enabled = true,
+                    },
+                },
                 jedi_completion = { enabled = false },
                 jedi_definition = { enabled = false },
                 jedi_hover = { enabled = false },
@@ -164,8 +172,8 @@ vim.lsp.config("jedi-language-server", {
 vim.lsp.enable({
     "jedi-language-server",
     "ruff",
-    "pylsp",
-    --"basedpyright",
+    "py-lsp",
+    "basedpyright",
     "ltex-lsp",
 })
 
