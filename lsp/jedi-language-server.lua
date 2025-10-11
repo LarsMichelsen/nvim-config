@@ -25,5 +25,6 @@ return {
     on_attach = function(client, bufnr)
         -- Provided by basedpyright
         client.server_capabilities.signatureHelpProvider = nil
+        client.server_capabilities.definitionProvider = nil
     end,
 }
