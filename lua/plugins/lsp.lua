@@ -98,6 +98,7 @@ return {
             lint.linters_by_ft = {
                 sh = { "shellcheck" },
                 yaml = { "yamllint" },
+                bzl = { "buildifier" },
             }
 
             lint.linters.shellcheck.args = {
@@ -115,6 +116,13 @@ return {
                     lint.try_lint()
                 end,
             })
+
+            lint.linters.buildifier = require("lint.util").wrap(lint.linters.buildifier, function(diagnostic)
+                if diagnostic.severity == vim.diagnostic.severity.WARN then
+                    diagnostic.severity = vim.diagnostic.severity.ERROR
+                end
+                return diagnostic
+            end)
         end,
     },
     {
