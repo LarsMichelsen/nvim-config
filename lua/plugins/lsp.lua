@@ -79,6 +79,9 @@ return {
             end,
             -- Customize formatters
             formatters = {
+                buildifier = {
+                    prepend_args = { "--warnings=+unsorted-dict-items" },
+                },
                 stylua = {
                     prepend_args = { "--indent-type", "Spaces", "--indent-width", "4" },
                 },
