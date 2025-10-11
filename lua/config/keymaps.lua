@@ -14,6 +14,9 @@ function map(mode, lhs, rhs, opts)
     vim.keymap.set(mode, lhs, rhs, options)
 end
 
+-- Be relaxed about ":w" vs ":W"
+map("n", ":W", ":w<CR>")
+
 -- Remap j and k to act as expected when used on long, wrapped, lines
 map("n", "j", "gj")
 map("n", "k", "gk")
