@@ -35,11 +35,11 @@ map("n", "n", "nzz")
 map("n", "<Down>", "gj")
 map("n", "<Up>", "gk")
 
-vim.keymap.set({"n", "x"}, "(", function()
-   vim.fn.search("['\"[({<]", 'W')
+vim.keymap.set({ "n", "x" }, "(", function()
+    vim.fn.search("['\"[({<]", "W")
 end)
-vim.keymap.set({"n", "x"}, ")", function()
-   vim.fn.search("[]'\")}>]", 'bW')
+vim.keymap.set({ "n", "x" }, ")", function()
+    vim.fn.search("[]'\")}>]", "bW")
 end)
 
 wk.add({

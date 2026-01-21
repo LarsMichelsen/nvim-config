@@ -14,7 +14,8 @@ return {
             require("mason-tool-installer").setup({
                 ensure_installed = {
                     -- python
-                    --"basedpyright", -- typing
+                    "basedpyright", -- typing
+                    "jedi-language-server", -- autocompletion
                     -- lua
                     "stylua", -- formatter
                     -- shell
@@ -24,6 +25,8 @@ return {
                     "yamllint", -- linter
                     -- containers
                     "hadolint", -- linter
+                    -- yaml, markdown, etc.
+                    "prettier", -- formatter
                 },
             })
 
@@ -60,6 +63,7 @@ return {
                 lua = { "stylua" },
                 sh = { "shfmt" },
                 yaml = { "prettier" },
+                markdown = { "prettier" },
                 --sql = { "sqlfluff" },
                 --rust = { "rustfmt" },
                 --go = { "gofumpt", "goimports", "gci" },
@@ -80,13 +84,17 @@ return {
             -- Customize formatters
             formatters = {
                 buildifier = {
-                    prepend_args = { "--warnings=+unsorted-dict-items" },
+                    prepend_args = { "-warnings=+unsorted-dict-items" },
+                    prepend_args = { "-lint=fix", "-warnings=+unsorted-dict-items" },
                 },
                 stylua = {
                     prepend_args = { "--indent-type", "Spaces", "--indent-width", "4" },
                 },
                 shfmt = {
                     prepend_args = { "-ci", "-i", "4" },
+                },
+                prettier = {
+                    prepend_args = { "--config", "bazel/tools/prettier.config.cjs" },
                 },
             },
         },
@@ -110,6 +118,8 @@ return {
                 "-x",
                 "-",
             }
+
+            table.insert(lint.linters.buildifier.args, "-warnings=+unsorted-dict-items,-module-docstring")
 
             local lint_augroup = vim.api.nvim_create_augroup("lint", { clear = true })
 
