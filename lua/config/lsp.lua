@@ -170,6 +170,7 @@ vim.lsp.config("jedi-language-server", {
 })
 
 vim.lsp.enable({
+    "astrein",
     "jedi-language-server",
     "ruff",
     "py-lsp",
@@ -197,3 +198,23 @@ require("which-key").add({
 
     { "<leader>wc", vim.lsp.buf.references, desc = "Find references" },
 }, { buffer = bufnr })
+
+vim.lsp.config("ruff", {
+    cmd = { ".venv/bin/ruff", "server" },
+    root_markers = { ".git" },
+})
+
+-- Upgrade ruff diagnostics to errors
+vim.api.nvim_create_autocmd("DiagnosticChanged", {
+    callback = function(ev)
+        for _, d in ipairs(vim.diagnostic.get(ev.buf, { severity = 2 })) do
+            if d.source == "Ruff" then
+                local diags = vim.diagnostic.get(ev.buf, { namespace = d.namespace })
+                for _, dd in ipairs(diags) do
+                    dd.severity = 1
+                end
+                return vim.diagnostic.set(d.namespace, ev.buf, diags)
+            end
+        end
+    end,
+})
