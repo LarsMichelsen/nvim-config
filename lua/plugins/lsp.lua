@@ -62,6 +62,7 @@ return {
                 python = { "ruff_fix", "ruff_format", "ruff_organize_imports" },
                 lua = { "stylua" },
                 sh = { "shfmt" },
+                json = { "bazel_format" },
                 yaml = { "prettier" },
                 markdown = { "prettier" },
                 --sql = { "sqlfluff" },
@@ -95,6 +96,16 @@ return {
                 },
                 prettier = {
                     prepend_args = { "--config", "bazel/tools/prettier.config.cjs" },
+                },
+                bazel_format = {
+                    command = vim.fn.getcwd() .. "/bazel-bin/bazel/tools/format/prettier_/prettier",
+                    args = { "--write", "$FILENAME" },
+                    -- command = "bazel",
+                    --args = { "run", "//bazel/tools/format:prettier", "--", "--write", "$FILENAME" },
+                    stdin = false,
+                    env = {
+                        BUILD_WORKSPACE_DIRECTORY = vim.fn.getcwd(),
+                    },
                 },
             },
         },
