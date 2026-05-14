@@ -49,3 +49,10 @@ vim.api.nvim_create_autocmd({ "BufRead", "BufNewFile" }, {
     pattern = "*.mk",
     command = "set syntax=python filetype=python",
 })
+
+vim.api.nvim_create_autocmd("FileType", {
+    pattern = "json",
+    callback = function()
+        vim.opt_local.conceallevel = 0
+    end,
+})

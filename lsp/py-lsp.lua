@@ -29,7 +29,7 @@ return {
         -- available in the mason provided venv.
         --vim.fn.stdpath("data") .. "/mason/bin/pylsp",
         "pylsp",
-        --"-vv",
+        "-vv",
         "--log-file",
         "/home/lm/.local/state/nvim/pylsp.log",
     },
@@ -43,6 +43,19 @@ return {
         ".git",
     },
     capabilities = require("cmp_nvim_lsp").default_capabilities(vim.lsp.protocol.make_client_capabilities()),
+    settings = {
+        pylsp = {
+            plugins = {
+                pylsp_mypy = {
+                    enabled = true,
+                    live_mode = false,
+                    dmypy = false,
+                    --mypy_command = {".venv/bin/mypy", "--show-error-codes", "--ignore-missing-imports", "--follow-imports=silent" },
+                    mypy_command = { ".venv/bin/mypy" },
+                },
+            },
+        },
+    },
     on_attach = function(client, bufnr)
         -- Provided by basedpyright
         client.server_capabilities.signatureHelpProvider = nil

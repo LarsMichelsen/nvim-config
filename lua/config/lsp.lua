@@ -169,6 +169,19 @@ vim.lsp.config("jedi-language-server", {
     },
 })
 
+vim.lsp.config("jsonls", {
+    settings = {
+        json = {
+            schemas = require("schemastore").json.schemas({
+                select = {
+                    "Claude Code Settings",
+                },
+            }),
+            validate = { enable = true },
+        },
+    },
+})
+
 vim.lsp.enable({
     "astrein",
     "jedi-language-server",
@@ -176,6 +189,8 @@ vim.lsp.enable({
     "py-lsp",
     "basedpyright",
     "ltex-lsp",
+    "jsonls",
+    "yamlls",
 })
 
 require("mason").setup()

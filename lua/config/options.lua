@@ -146,3 +146,8 @@ vim.api.nvim_create_autocmd({ "BufEnter", "BufWinEnter" }, {
         vim.fn.matchadd("OverLength", "\\%101v.*")
     end,
 })
+
+-- Trigger checktime to update changes files
+vim.api.nvim_create_autocmd({ "FocusGained", "BufEnter", "CursorHold" }, {
+    command = "checktime",
+})

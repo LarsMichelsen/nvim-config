@@ -5,9 +5,8 @@
 --end
 
 return {
-    {
-        "mason-org/mason.nvim",
-    },
+    { "mason-org/mason.nvim" },
+    { "b0o/SchemaStore.nvim" },
     {
         "WhoIsSethDaniel/mason-tool-installer.nvim",
         config = function()
@@ -25,8 +24,10 @@ return {
                     "yamllint", -- linter
                     -- containers
                     "hadolint", -- linter
-                    -- yaml, markdown, etc.
+                    -- yaml, markdown, json etc.
                     "prettier", -- formatter
+                    "json-lsp", -- lsp
+                    "yaml-language-server", -- lsp
                 },
             })
 
@@ -80,13 +81,14 @@ return {
                 if vim.g.disable_autoformat or vim.b[bufnr].disable_autoformat then
                     return
                 end
-                return { timeout_ms = 500, lsp_fallback = false }
+                return { timeout_ms = 1000, lsp_fallback = false }
             end,
             -- Customize formatters
             formatters = {
                 buildifier = {
-                    prepend_args = { "-warnings=+unsorted-dict-items" },
-                    prepend_args = { "-lint=fix", "-warnings=+unsorted-dict-items" },
+                    -- command = "bazel run //:buildifier --",
+                    --command = vim.fn.getcwd()
+                    --    .. "/bazel-bin/bazel/tools/buildifier.runfiles/buildifier_prebuilt+/buildifier/buildifier",
                 },
                 stylua = {
                     prepend_args = { "--indent-type", "Spaces", "--indent-width", "4" },
@@ -130,7 +132,7 @@ return {
                 "-",
             }
 
-            table.insert(lint.linters.buildifier.args, "-warnings=+unsorted-dict-items,-module-docstring")
+            lint.linters.buildifier.args = { "--mode=check" }
 
             local lint_augroup = vim.api.nvim_create_augroup("lint", { clear = true })
 
