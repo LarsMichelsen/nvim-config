@@ -1,26 +1,94 @@
 return {
-    -- Was visually too noisy for me. I also prefer to have blames on the side for multiple lines at
-    -- once which the plugin could not deliver
-    --{
-    --    -- https://github.com/f-person/git-blame.nvim
-    --    "f-person/git-blame.nvim",
-    --    keys = {
-    --        -- toggle needs to be called twice; https://github.com/f-person/git-blame.nvim/issues/16
-    --        { "<leader>gbe", ":GitBlameEnable<CR>", desc = "Blame line (enable)" },
-    --        { "<leader>gbd", ":GitBlameDisable<CR>", desc = "Blame line (disable)" },
-    --        { "<leader>gbs", ":GitBlameCopySHA<CR>", desc = "Copy SHA" },
-    --        { "<leader>gbc", ":GitBlameCopyCommitURL<CR>", desc = "Copy commit URL" },
-    --        { "<leader>gbf", ":GitBlameCopyFileURL<CR>", desc = "Copy file URL" },
-    --    },
-    --    -- let g:gitblame_date_format = '%r'
-    --    config = function()
-    --        vim.g.gitblame_date_format = "%Y-%m-%d %H:%M"
-    --        vim.g.gitblame_display_virtual_text = 0
-    --    end,
-    --},
-    --{
-    --    "tpope/vim-fugitive",
-    --},
+    {
+        "spacedentist/resolve.nvim",
+        dependencies = { "folke/which-key.nvim" },
+        event = { "BufReadPre", "BufNewFile" },
+        keys = {
+            {
+                "]c",
+                "<Plug>(resolve-next)",
+                desc = "Next conflict",
+            },
+            {
+                "[c",
+                "<Plug>(resolve-prev)",
+                desc = "Previous conflict",
+            },
+
+            {
+                "<leader>co",
+                "<Plug>(resolve-ours)",
+                desc = "Choose ours",
+            },
+            {
+                "<leader>ct",
+                "<Plug>(resolve-theirs)",
+                desc = "Choose theirs",
+            },
+            {
+                "<leader>cb",
+                "<Plug>(resolve-both)",
+                desc = "Choose both",
+            },
+            {
+                "<leader>cB",
+                "<Plug>(resolve-both-reverse)",
+                desc = "Choose both reverse",
+            },
+            {
+                "<leader>cm",
+                "<Plug>(resolve-base)",
+                desc = "Choose base",
+            },
+            {
+                "<leader>cn",
+                "<Plug>(resolve-none)",
+                desc = "Choose none",
+            },
+
+            {
+                "<leader>cdo",
+                "<Plug>(resolve-diff-ours)",
+                desc = "Diff ours",
+            },
+            {
+                "<leader>cdt",
+                "<Plug>(resolve-diff-theirs)",
+                desc = "Diff theirs",
+            },
+            {
+                "<leader>cdb",
+                "<Plug>(resolve-diff-both)",
+                desc = "Diff both",
+            },
+            {
+                "<leader>cdv",
+                "<Plug>(resolve-diff-vs)",
+                desc = "Diff ours → theirs",
+            },
+            {
+                "<leader>cdV",
+                "<Plug>(resolve-diff-vs-reverse)",
+                desc = "Diff theirs → ours",
+            },
+
+            {
+                "<leader>cl",
+                "<Plug>(resolve-list)",
+                desc = "List conflicts",
+            },
+        },
+        opts = {
+            default_keymaps = false,
+        },
+        config = function(_, opts)
+            require("resolve").setup(opts)
+            require("which-key").add({
+                { "<leader>c", group = "Git Conflicts" },
+                { "<leader>cd", group = "Diff" },
+            })
+        end,
+    },
     {
         "FabijanZulj/blame.nvim",
         lazy = false,

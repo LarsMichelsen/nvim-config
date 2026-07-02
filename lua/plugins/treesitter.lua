@@ -73,15 +73,15 @@ return {
                     mode = { "n", "x", "o" },
                     desc = "Next last move",
                 },
-                {
-                    ",",
-                    function()
-                        return ts.repeatable_move.repeat_last_move_opposite()
-                    end,
-                    expr = true,
-                    mode = { "n", "x", "o" },
-                    desc = "Prev last move",
-                },
+                --{
+                --    ",",
+                --    function()
+                --        return ts.repeatable_move.repeat_last_move_opposite()
+                --    end,
+                --    expr = true,
+                --    mode = { "n", "x", "o" },
+                --    desc = "Prev last move",
+                --},
                 {
                     "f",
                     function()
