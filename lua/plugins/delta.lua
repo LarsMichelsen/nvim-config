@@ -1,0 +1,5 @@
+return {
+    {
+        "kokusenz/deltaview.nvim",
+    },
+}
